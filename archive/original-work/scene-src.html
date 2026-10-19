@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>雨夜中式小庭院巷角</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07101b;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+#stage{position:fixed;inset:0}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+</style>
+</head>
+<body>
+<div id="stage" aria-label="雨夜中式小庭院巷角三维模型"></div>
+<script>/*__THREE__*/</script>
+<script>
+(() => {
+  const T = THREE;
+  const stage = document.getElementById('stage');
+  const scene = new T.Scene();
+  scene.background = new T.Color(0x06101c);
+  scene.fog = new T.Fog(0x06101c, 15, 38);
+
+  const renderer = new T.WebGLRenderer({antialias:true, alpha:false});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.outputColorSpace = T.SRGBColorSpace;
+  renderer.toneMapping = T.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.16;
+  stage.appendChild(renderer.domElement);
+
+  const camera = new T.PerspectiveCamera(42, innerWidth/innerHeight, .1, 100);
+  const target = new T.Vector3(0, 1.5, 0);
+  let yaw = -0.7, pitch = 0.48, radius = 18;
+  function updateCamera(){
+    const cp = Math.cos(pitch);
+    camera.position.set(target.x + radius*cp*Math.sin(yaw), target.y + radius*Math.sin(pitch), target.z + radius*cp*Math.cos(yaw));
+    camera.lookAt(target);
+  }
+  updateCamera();
+
+  const hemi = new T.HemisphereLight(0x6c83a8, 0x14151b, 1.7); scene.add(hemi);
+  const moon = new T.DirectionalLight(0x9ab9e6, 1.1); moon.position.set(-8,12,8); moon.castShadow=true; moon.shadow.mapSize.set(2048,2048); scene.add(moon);
+  const warm = new T.PointLight(0xffad55, 3.4, 11, 2); warm.position.set(-0.1,2.35,0.45); warm.castShadow=true; scene.add(warm);
+  const lamp = new T.PointLight(0xffce74, 2.2, 6, 2); lamp.position.set(1.15,2.7,2.2); scene.add(lamp);
+  const cyan = new T.PointLight(0x5b9dcc, 1.4, 9, 2); cyan.position.set(-4,2.0,3.7); scene.add(cyan);
+
+  const mat = (color, rough=0.82, metal=0) => new T.MeshStandardMaterial({color, roughness:rough, metalness:metal});
+  const toon = (color) => new T.MeshToonMaterial({color, gradientMap: toonGradient});
+  const toonGradient = (()=>{const g=new T.DataTexture(new Uint8Array([55,55,55,160,160,160,235,235,235]),3,1,T.RedFormat);g.needsUpdate=true;return g;})();
+  const darkWood=mat(0x2c1d1d,.7), redWood=mat(0x622b26,.68), brick=mat(0x2a3138,.98), brickLite=mat(0x47505a,.96), roof=mat(0x16212a,.8), tile=mat(0x34404a,.82), stone=mat(0x56636b,.95), stoneWet=mat(0x3e555e,.36), plaster=mat(0xa99e8b,.96), paper=mat(0xffe7ab,.8), green=mat(0x345e49,.86), bamboo=mat(0x7e8d43,.8), gold=mat(0xc9944a,.55), black=mat(0x101216,.9), water=mat(0x2f6175,.17);
+  const outlineMat = new T.LineBasicMaterial({color:0x0d1119, transparent:true, opacity:.82});
+  function addOutline(mesh, weight=1){
+    const e = new T.EdgesGeometry(mesh.geometry, 28); const l = new T.LineSegments(e, outlineMat); l.scale.setScalar(1.002+weight*.001); mesh.add(l); return mesh;
+  }
+  function box(name, size, pos, material, outline=true){const ss=Array.isArray(size)?size:[1,1,1]; const pp=Array.isArray(pos)?pos:[0,0,0]; const m=addOutline(new T.Mesh(new T.BoxGeometry(...ss),material));m.name=name;m.position.set(...pp);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
+  function cyl(name, r,h,pos,material,radial=16){const pp=Array.isArray(pos)?pos:[0,0,0]; const m=addOutline(new T.Mesh(new T.CylinderGeometry(r,r,h,radial),material));m.name=name;m.position.set(...pp);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
+  function group(){const g=new T.Group();scene.add(g);return g;}
+
+  // square collectible base and wet paving
+  box('detail',[1,1,1],[0,0,0],mat(0x171d24,.92));
+  box('detail',[1,1,1],[0,0,0],stoneWet,false);
+  // paving slabs
+  for(let x=-6.9;x<=6.9;x+=1.05) for(let z=-6.9;z<=6.9;z+=1.05){
+    if(Math.abs(x)<3.8 && z<1.8) continue;
+    const s=box('detail',[1,1,1],[0,0,0],mat(((Math.round((x+z)*10)%4===0)?0x536771:0x485b64),.55),false);
+    s.rotation.y=((Math.sin(x*2.3+z)*.06));
+  }
+  // glinting puddles
+  for(const p of [[-5.5,4.3,1.8,.38],[4.7,5.1,1.5,.34],[-3.5,-4.4,2.1,.28],[4,-2.8,1.6,.32]]){
+    const q=new T.Mesh(new T.CircleGeometry(p[2],32),new T.MeshBasicMaterial({color:0x6ba1ad,transparent:true,opacity:.18,depthWrite:false}));q.rotation.x=-Math.PI/2;q.position.set(p[0],.145,p[1]);scene.add(q);
+  }
+  // rain ripple rings
+  for(let i=0;i<42;i++){
+    const a=Math.random()*Math.PI*2, r=2+Math.random()*5.3; const g=new T.RingGeometry(.03,.09,14); const m=new T.Mesh(g,new T.MeshBasicMaterial({color:0xb5e0e7,transparent:true,opacity:.18,side:T.DoubleSide}));m.rotation.x=-Math.PI/2;m.position.set(Math.cos(a)*r,.17,Math.sin(a)*r);m.scale.setScalar(.5+Math.random()*1.7);scene.add(m);
+  }
+
+  // street corner and walls
+  box('detail',[1,1,1],[0,0,0],brick);
+  box('detail',[1,1,1],[0,0,0],brick);
+  box('detail',[1,1,1],[0,0,0],brick);
+  // wall cap tiles
+  for(let z=-3.4;z<=4.2;z+=.62) box('detail',[1,1,1],[0,0,0],tile);
+  for(let x=-5.1;x<=3.4;x+=.62) box('detail',[1,1,1],[0,0,0],tile);
+
+  // house volume behind moon gate, open-front for visibility
+  box('detail',[1,1,1],[0,0,0],darkWood);
+  box('detail',[1,1,1],[0,0,0],darkWood);
+  box('detail',[1,1,1],[0,0,0],plaster);
+  // roof and eaves
+  const roofShape=new T.Shape(); roofShape.moveTo(-4.3,-1.55);roofShape.lineTo(4.3,-1.55);roofShape.lineTo(3.75,1.45);roofShape.lineTo(-3.75,1.45);roofShape.closePath();
+  const roofGeo=new T.ExtrudeGeometry(roofShape,{depth:.32,bevelEnabled:false});
+  const roofMesh=addOutline(new T.Mesh(roofGeo,roof));roofMesh.rotation.x=Math.PI/2;roofMesh.rotation.z=0;roofMesh.position.set(-.2,3.78,1.25);roofMesh.castShadow=true;roofMesh.visible=false;scene.add(roofMesh);
+  for(let i=-4;i<=4;i+=.62){ const t=cyl('瓦当',.16,.52,(i,3.95,.05),tile,12);t.rotation.z=Math.PI/2; }
+  box('detail',[1,1,1],[0,0,0],roof);
+  // gutter and rain chain
+  cyl('雨链',.08,2.2,(3.92,2.35,1.95),gold,10);
+  for(let i=0;i<8;i++){const r=cyl('雨链环',.13,.05,(3.92,1.25+i*.2,1.95),gold,10);r.rotation.x=Math.PI/2;}
+
+  // moon gate frame and arched opening
+  const gateGroup=new T.Group(); gateGroup.position.set(0,0,0.18); scene.add(gateGroup);
+  const gateOuter=new T.Mesh(new T.TorusGeometry(2.05,.26,12,48,Math.PI),redWood);gateOuter.rotation.z=Math.PI/2;gateOuter.position.set(0,2.0,0);gateOuter.castShadow=true;gateGroup.add(gateOuter);
+  box('detail',[1,1,1],[0,0,0],brick);
+  box('detail',[1,1,1],[0,0,0],brick);
+  box('detail',[1,1,1],[0,0,0],redWood);
+  box('detail',[1,1,1],[0,0,0],gold,false);
+  // plaque strokes
+  for(let i=-.65;i<=.65;i+=.32) box('detail',[1,1,1],[0,0,0],darkWood,false);
+  // stone steps
+  for(let i=0;i<3;i++) box('detail',[1,1,1],[0,0,0],stone);
+  // interior floor and tatami
+  box('detail',[1,1,1],[0,0,0],mat(0x6b4b3b,.9));
+  for(let x=-2.3;x<=2.2;x+=.85) for(let z=.75;z<=2.7;z+=.85) box('detail',[1,1,1],[0,0,0],mat(0x8b6b4e,.88),false);
+  // interior warm backdrop
+  box('detail',[1,1,1],[0,0,0],mat(0x4a2e27,.78));
+  for(let x=-1.25;x<=1.25;x+=.42) box('detail',[1,1,1],[0,0,0],gold,false);
+  for(let y=.6;y<=2.3;y+=.42) box('detail',[1,1,1],[0,0,0],gold,false);
+  // table, chairs, altar
+  box('detail',[1,1,1],[0,0,0],darkWood);
+  for(const [x,z] of [[-.85,1.15],[.55,1.15],[-.85,1.95],[.55,1.95]]) box('detail',[1,1,1],[0,0,0],darkWood);
+  function chair(x,z,rot=0){const g=new T.Group();g.position.set(x,0,z);g.rotation.y=rot;g.add(new T.Mesh(new T.BoxGeometry(.72,.13,.65),darkWood));const back=new T.Mesh(new T.BoxGeometry(.72,1.15,.12),darkWood);back.position.set(0,.64,.28);g.add(back);for(const sx of [-.25,.25])for(const sz of [-.2,.2]){const l=new T.Mesh(new T.BoxGeometry(.1,.7,.1),darkWood);l.position.set(sx,.35,sz);g.add(l);}scene.add(g);return g;}
+  chair(-1.5,1.6,Math.PI/2);chair(1.2,1.6,-Math.PI/2);chair(-.15,.58,0);
+  box('detail',[1,1,1],[0,0,0],darkWood);
+  box('detail',[1,1,1],[0,0,0],darkWood);
+  for(let y=.65;y<2.7;y+=.55) box('detail',[1,1,1],[0,0,0],gold,false);
+  for(const [x,y] of [[1.75,.95],[2.45,1.5],[1.85,2.1],[2.5,2.5]]) cyl('花瓶',.14,.32,(x,y,2.38),mat(0x668b95,.55),12);
+  // tea set
+  cyl('茶壶',.18,.2,(-.15,1.58,1.55),mat(0x9a6a4a,.7),16);
+  for(let i=-1;i<=1;i++) cyl('茶杯',.1,.12,(-.55+i*.4,1.5,1.55),paper,12);
+
+  // lattice windows and half-open door
+  function latticeWindow(cx,cy,cz,w,h){
+    box('detail',[1,1,1],[0,0,0],darkWood);box('detail',[1,1,1],[0,0,0],darkWood);box('detail',[1,1,1],[0,0,0],darkWood);box('detail',[1,1,1],[0,0,0],darkWood);
+    for(let x=-w/2+.28;x<w/2;x+=.38) box('detail',[1,1,1],[0,0,0],darkWood,false);
+    for(let y=.28;y<h;y+=.38) box('detail',[1,1,1],[0,0,0],darkWood,false);
+    box('detail',[1,1,1],[0,0,0],new T.MeshStandardMaterial({color:0x9ac8c4,transparent:true,opacity:.24,roughness:.2}),false);
+  }
+  latticeWindow(-2.85,1.45,.03,1.4,1.55); latticeWindow(2.45,1.45,.03,1.3,1.55);
+  const door=new T.Group();door.position.set(.55,1.55,-.05);door.rotation.y=-.48;scene.add(door);box('detail',[1,1,1],[0,0,0],redWood);for(let x=-.46;x<=.46;x+=.3)box('detail',[1,1,1],[0,0,0],gold,false);for(let y=-.75;y<=.75;y+=.38)box('detail',[1,1,1],[0,0,0],gold,false);
+
+  // lanterns
+  function lantern(x,y,z,scale=1){const g=new T.Group();g.position.set(x,y,z);g.scale.setScalar(scale);const body=new T.Mesh(new T.CylinderGeometry(.32,.42,.8,12),new T.MeshStandardMaterial({color:0xb7362f,emissive:0x4b120b,emissiveIntensity:1.5,roughness:.65}));g.add(body);const top=new T.Mesh(new T.CylinderGeometry(.22,.28,.12,12),gold);top.position.y=.47;g.add(top);const bot=top.clone();bot.position.y=-.47;g.add(bot);for(let i=0;i<4;i++){const s=new T.Mesh(new T.BoxGeometry(.04,.68,.04),gold);s.rotation.y=i*Math.PI/2;s.position.z=.22;g.add(s);}scene.add(g);return g;}
+  lantern(-2.55,2.65,.1,.9);lantern(2.4,2.68,.1,.86);lantern(4.55,2.3,3.0,.7);
+  // bamboo, banana, plum branch and bonsai
+  for(let i=0;i<7;i++){const x=-4.35+(i%3)*.25,z=2.8+Math.floor(i/3)*.28;const s=cyl('竹竿',.09,2.4,(x,1.35,z),bamboo,10);s.rotation.z=(i%2?-1:1)*.08;for(let y=.5;y<2.3;y+=.45) box('detail',[1,1,1],[0,0,0],green,false);}
+  for(let i=0;i<6;i++){const leaf=new T.Mesh(new T.SphereGeometry(.48,10,6),new T.MeshStandardMaterial({color:0x2f684a,roughness:.9}));leaf.scale.set(.4,1.2,.18);leaf.position.set(-4.05+(i%2)*.45,.95+Math.floor(i/2)*.4,2.95+(i%3)*.22);leaf.rotation.z=(i%2?-.45:.4);scene.add(leaf);}
+  const branch=cyl('梅枝',.11,2.3,(4.35,1.95,1.55),darkWood,10);branch.rotation.z=-.75;for(let i=0;i<8;i++){const fl=cyl('梅花',.12,.06,(4.0+Math.random()*.9,2.5+Math.random()*.8,1.35+Math.random()*.3),new T.MeshStandardMaterial({color:0xd77b86,emissive:0x341017,emissiveIntensity:.3}),10);fl.rotation.x=Math.PI/2;}
+  // water jar and stone lantern
+  cyl('水缸',.62,.82,(-3.85,.67,-1.65),mat(0x4b727b,.58),20);cyl('水面',.48,.02,(-3.85,1.09,-1.65),water,24);
+  cyl('石灯笼',.34,.72,(3.95,.6,-1.05),stone,12);box('detail',[1,1,1],[0,0,0],stone);box('detail',[1,1,1],[0,0,0],paper);
+
+  // alley props: bicycle, mailbox, umbrella stand, bin, railing, sign, AC
+  const bike=new T.Group();bike.position.set(5.2,.65,.2);bike.rotation.y=-.6;scene.add(bike);for(const x of [-.65,.65]){const w=new T.Mesh(new T.TorusGeometry(.48,.055,10,24),black);w.rotation.y=Math.PI/2;w.position.x=x;bike.add(w);}const frame=box('detail',[1,1,1],[0,0,0],gold,false);frame.rotation.z=.42;bike.add(frame);for(const p of [[-.65,.48,0],[.65,.48,0]]){const s=box('detail',[1,1,1],p,gold,false);s.rotation.z=-.8;bike.add(s);}box('detail',[1,1,1],[0,0,0],gold,false);
+  box('detail',[1,1,1],[0,0,0],redWood);box('detail',[1,1,1],[0,0,0],gold,false);
+  box('detail',[1,1,1],[0,0,0],darkWood);for(let i=0;i<3;i++){const u=cyl('伞柄',.035,.8,(4.38+i*.16,1.35,2.65),darkWood,8);u.rotation.z=(i-1)*.16;}
+  cyl('竹编垃圾桶',.32,.62,(5.25,.48,1.55),bamboo,16);
+  box('detail',[1,1,1],[0,0,0],darkWood);for(let x=5.0;x<=6.7;x+=.55)box('detail',[1,1,1],[0,0,0],darkWood);
+  box('detail',[1,1,1],[0,0,0],darkWood);box('detail',[1,1,1],[0,0,0],mat(0x2b5c78,.7));
+  box('detail',[1,1,1],[0,0,0],stone);for(let i=0;i<5;i++)box('detail',[1,1,1],[0,0,0],darkWood,false);
+  box('detail',[1,1,1],[0,0,0],darkWood);box('detail',[1,1,1],[0,0,0],new T.MeshStandardMaterial({color:0xb94b42,roughness:.8}),false);
+  // rain streaks in foreground
+  const rainPos=[];for(let i=0;i<380;i++){rainPos.push((Math.random()-.5)*16,Math.random()*10+.3,(Math.random()-.5)*16);}const rg=new T.BufferGeometry();rg.setAttribute('position',new T.Float32BufferAttribute(rainPos,3));const rain=new T.Points(rg,new T.PointsMaterial({color:0xa9d6e3,size:.035,transparent:true,opacity:.5}));scene.add(rain);
+  // subtle neon sign reflection strip
+  box('detail',[1,1,1],[0,0,0],new T.MeshBasicMaterial({color:0x4b9ccc,transparent:true,opacity:.35}),false);
+
+  // interaction: drag orbit, wheel zoom, touch pinch
+  let dragging=false,lastX=0,lastY=0;
+  renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);});
+  renderer.domElement.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;yaw-=dx*.008;pitch=Math.max(.24,Math.min(1.18,pitch-dy*.006));updateCamera();});
+  renderer.domElement.addEventListener('pointerup',()=>dragging=false);
+  renderer.domElement.addEventListener('pointercancel',()=>dragging=false);
+  renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();radius=Math.max(10,Math.min(25,radius*Math.exp(e.deltaY*.001)));updateCamera();},{passive:false});
+  addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+
+  const clock=new T.Clock();
+  function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();warm.intensity=3.1+Math.sin(t*2.3)*.35;lamp.intensity=2.0+Math.sin(t*2.8+.5)*.22;rain.rotation.y=t*.008;renderer.render(scene,camera);}animate();
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
+
