@@ -5,6 +5,7 @@ type Batch = { geometry: T.BufferGeometry; material: T.Material; matrices: T.Mat
 export class Builder {
   frame = new T.Matrix4();
   batches = new Map<string, Batch>();
+  inkPositions: number[] = [];
   boxGeo = new T.BoxGeometry(1, 1, 1);
   sphereGeo = new T.IcosahedronGeometry(1, 2);
   smallSphereGeo = new T.IcosahedronGeometry(1, 1);
@@ -38,6 +39,11 @@ export class Builder {
   }
   box(x: number, y: number, z: number, w: number, h: number, d: number, mat: T.Material, solid = false, ry = 0) {
     this.put(this.boxGeo, mat, x, y, z, w, h, d, 0, ry);
+    if ((solid || Math.max(w,h,d)>2) && Math.min(w,h,d)>.1) {
+      const matrix=this.frame.clone().multiply(new T.Matrix4().compose(new T.Vector3(x,y,z),new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),ry),new T.Vector3(w,h,d)));
+      const edge=new T.EdgesGeometry(this.boxGeo),position=edge.getAttribute('position'),v=new T.Vector3();
+      for(let i=0;i<position.count;i++){v.fromBufferAttribute(position,i).applyMatrix4(matrix);this.inkPositions.push(v.x,v.y,v.z);}edge.dispose();
+    }
     if (solid) {
       const p = new T.Vector3(x, y, z).applyMatrix4(this.frame);
       const yaw = Math.atan2(this.frame.elements[8]!, this.frame.elements[0]!) + ry;
@@ -63,6 +69,10 @@ export class Builder {
     mesh.castShadow = !mat.transparent; mesh.receiveShadow = true; this.scene.add(mesh); return mesh;
   }
   finish() {
+    if(this.inkPositions.length){
+      const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(this.inkPositions,3));
+      const ink=new T.LineSegments(geo,new T.LineBasicMaterial({color:'#102b38',transparent:true,opacity:.32}));ink.name='Architectural ink contours';this.scene.add(ink);this.inkPositions=[];
+    }
     for (const { geometry, material, matrices, shadow } of this.batches.values()) {
       const mesh = new T.InstancedMesh(geometry, material, matrices.length);
       matrices.forEach((m, i) => mesh.setMatrixAt(i, m));

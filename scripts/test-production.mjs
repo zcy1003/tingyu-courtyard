@@ -24,8 +24,8 @@ for(const [name,path]of [['Chrome','C:/Program Files/Google/Chrome/Application/c
     await page.goto(base,{waitUntil:'networkidle'});await page.waitForFunction(()=>!document.getElementById('start').disabled,{timeout:90000});
     assert.equal(await page.evaluate(()=>typeof window.__tingyu),'undefined');
     await page.click('#start');await page.waitForTimeout(900);assert(await page.locator('#hud').isVisible());
-    await page.keyboard.down('s');await page.waitForTimeout(10500);await page.keyboard.up('s');
-    assert.equal(await page.locator('#place-name').innerText(),'青石巷');
+    await page.keyboard.down('s');await page.waitForTimeout(5000);await page.keyboard.up('s');
+    assert.equal(await page.locator('#place-name').innerText(),'青石雨巷');
     await page.keyboard.press('m');assert(await page.locator('#map-panel').isVisible());await page.keyboard.press('Escape');
     await page.keyboard.press('Escape');await page.selectOption('#quality','high');await page.selectOption('#quality','low');await page.selectOption('#quality','standard');await page.click('#resume');
     await page.click('#audio');assert.equal(await page.locator('#audio').getAttribute('aria-pressed'),'true');await page.click('#audio');

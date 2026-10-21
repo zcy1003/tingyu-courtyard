@@ -1,9 +1,9 @@
 {
   "name": "tingyu-town",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "听雨小镇：春日雨后的第三人称江南小镇漫游游戏。",
+  "description": "听雨小镇：紧凑雨夜街区中的第三人称江南漫游游戏。",
   "engines": {
     "node": "^24.0.0"
   },

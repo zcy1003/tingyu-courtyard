@@ -6,7 +6,7 @@ import { FollowCamera } from './camera';
 import { Ambience } from './audio';
 import { makeSky } from './atmosphere';
 import { ScenicRenderer } from './rendering';
-import { LOCATIONS, PATHS, WAYPOINTS, riverX, GROUND } from './config';
+import { LOCATIONS, PATHS, WAYPOINTS, HOUSES, RIVER_HALF, SPAWN, WORLD_HALF, riverX, GROUND } from './config';
 import './style.css';
 
 const $ = <E extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as E;
@@ -21,7 +21,7 @@ class Game {
   camera = new T.PerspectiveCamera(50, innerWidth / innerHeight, .08, 500);
   physics!: Physics; town!: Town; player!: Player; follow!: FollowCamera;
   mode: Mode = 'title'; keys = new Set<string>(); audio = new Ambience();
-  sun = new T.DirectionalLight('#fff1d9', 3.25);
+  sun = new T.DirectionalLight('#a9d1ff', 1.15);
   shadowAnchor = new T.Vector3(999, 0, 999);
   visited = new Set<string>(); location = 'A';
   elapsed = 0; accumulator = 0; previous = 0; mapTimer = 0; frame = 0;
@@ -33,17 +33,19 @@ class Game {
   constructor() {
     this.renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.35)); this.renderer.setSize(innerWidth, innerHeight);
-    this.renderer.outputColorSpace = T.SRGBColorSpace; this.renderer.toneMapping = T.ACESFilmicToneMapping; this.renderer.toneMappingExposure = 1.02;
+    this.renderer.outputColorSpace = T.SRGBColorSpace; this.renderer.toneMapping = T.ACESFilmicToneMapping; this.renderer.toneMappingExposure = 1.12;
     this.renderer.info.autoReset = false;
     this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = T.PCFShadowMap;
     this.renderer.shadowMap.autoUpdate=false;
     this.renderer.domElement.setAttribute('aria-label', '可用键盘行走、拖动鼠标观察的中式小镇');
     $('world').append(this.renderer.domElement);
-    this.scene.fog = new T.Fog('#c7ddd5', 82, 310);
-    this.scene.add(new T.HemisphereLight('#d7e8f4', '#b3a891', 1.65));
+    this.scene.background = new T.Color('#172332');
+    this.scene.fog = new T.Fog('#172332', 65, 180);
+    this.scene.add(new T.HemisphereLight('#b9d2f1', '#424652', .68));
+    const rim = new T.DirectionalLight('#7bafc9', .65); rim.position.set(10,15,-18); this.scene.add(rim);
     this.scene.add(makeSky());
     this.sun.castShadow = true; this.sun.shadow.mapSize.set(2048, 2048);
-    Object.assign(this.sun.shadow.camera, { left: -28, right: 28, top: 28, bottom: -28, near: 1, far: 150 });
+    Object.assign(this.sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 100 });
     this.sun.shadow.normalBias = .025; this.sun.shadow.bias = -.00015; this.sun.shadow.radius = 3;
     this.scene.add(this.sun, this.sun.target);
     this.scenic = new ScenicRenderer(this.renderer, this.scene, this.camera);
@@ -55,11 +57,11 @@ class Game {
     progress(72, '等一阵风穿过竹林…'); await nextFrame();
     this.player = new Player(this.physics, this.scene); this.physics.world.step(); this.player.sync();
     this.follow = new FollowCamera(this.camera, this.player); this.events();
-    this.camera.position.set(-21, 9.5, -7); this.camera.lookAt(8, 2.1, -36); this.updateShadow(new T.Vector3(-12, 0, -26));
-    progress(90, '春天快到了…'); await nextFrame();
+    this.camera.position.set(34, 44, 66); this.camera.lookAt(-1, 1.4, 0); this.updateShadow(new T.Vector3(-5, 0, -6));
+    progress(90, '点亮窗灯，等一场雨…'); await nextFrame();
     await this.renderer.compileAsync(this.scene, this.camera);
-    this.player.avatar.root.visible=false;this.town.captureReflection(this.renderer);this.renderer.shadowMap.needsUpdate=true;
-    progress(100, '走进小镇'); ($('start') as HTMLButtonElement).disabled = false;
+    this.player.avatar.root.visible=false;this.renderer.shadowMap.needsUpdate=true;
+    progress(100, '走进雨巷'); ($('start') as HTMLButtonElement).disabled = false;
     this.previous = performance.now(); this.tick(this.previous);
     if (import.meta.env.DEV) this.debug();
   }
@@ -74,13 +76,14 @@ class Game {
     $('exit-photo').addEventListener('click', () => this.setMode('playing'), opt);
     $('save-photo').addEventListener('click', () => this.savePhoto(), opt);
     $('quality').addEventListener('change', e => this.setQuality((e.target as HTMLSelectElement).value), opt);
-    $('audio').addEventListener('click', () => { void this.audio.toggle().then(on => { $('audio').setAttribute('aria-pressed', String(on)); $('audio').setAttribute('aria-label', on ? '关闭环境声音' : '开启环境声音'); this.toast(on ? '听见风、水与远处的鸟鸣' : '环境声音已关闭'); }).catch(() => this.toast('当前浏览器暂时无法播放声音')); }, opt);
+    $('audio').addEventListener('click', () => { void this.audio.toggle().then(on => { $('audio').setAttribute('aria-pressed', String(on)); $('audio').setAttribute('aria-label', on ? '关闭环境声音' : '开启环境声音'); this.toast(on ? '听见雨丝、水声与檐下滴答' : '环境声音已关闭'); }).catch(() => this.toast('当前浏览器暂时无法播放声音')); }, opt);
     window.addEventListener('keydown', e => {
       if (this.mode === 'title') return;
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
       if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) return;
       if (!e.repeat) {
         if (e.code === 'Escape') { this.setMode(this.mode === 'playing' ? 'paused' : 'playing'); return; }
+        if (e.code === 'KeyH') { document.body.classList.toggle('hide-hud'); return; }
         if (e.code === 'KeyM') { this.setMode(this.mode === 'map' ? 'playing' : 'map'); return; }
         if (e.code === 'KeyP') { this.setMode(this.mode === 'photo' ? 'playing' : 'photo'); return; }
         if (e.code === 'KeyR') { this.reset(); return; }
@@ -127,14 +130,14 @@ class Game {
   updateShadow(center: T.Vector3) {
     if (center.distanceToSquared(this.shadowAnchor) < 16) return;
     this.shadowAnchor.copy(center);
-    this.sun.position.set(center.x - 32, 65, center.z + 35); this.sun.target.position.set(center.x, 0, center.z); this.sun.target.updateMatrixWorld();
+    this.sun.position.set(center.x - 16, 32, center.z + 20); this.sun.target.position.set(center.x, 0, center.z); this.sun.target.updateMatrixWorld();
     this.renderer.shadowMap.needsUpdate=true;
   }
   toast(text: string) { if (this.toastTimer) clearTimeout(this.toastTimer); $('toast').textContent = text; $('toast').classList.add('show'); this.toastTimer = setTimeout(() => $('toast').classList.remove('show'), 3300); }
   updateLocation() {
     const p = this.player.position;
     const nearest = [...LOCATIONS].sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))[0]!;
-    if (Math.hypot(nearest.x - p.x, nearest.z - p.z) > nearest.radius) { $('place-name').textContent = '听雨小镇'; $('place-note').textContent = '在春风里，随处走走'; return; }
+    if (Math.hypot(nearest.x - p.x, nearest.z - p.z) > nearest.radius) { $('place-name').textContent = '听雨小镇'; $('place-note').textContent = '沿着灯火，听一场雨'; return; }
     $('place-name').textContent = nearest.name; $('place-note').textContent = nearest.note;
     if (!this.visited.has(nearest.id)) {
       this.visited.add(nearest.id); $('arrival').querySelector('strong')!.textContent = nearest.name; $('arrival').querySelector('p')!.textContent = nearest.note; $('arrival').classList.add('show');
@@ -144,26 +147,24 @@ class Game {
     this.location = nearest.id;
   }
   drawMap(canvas: HTMLCanvasElement, mini: boolean) {
-    const c = canvas.getContext('2d')!, n = canvas.width, k = n / 200;
+    const c = canvas.getContext('2d')!, n = canvas.width, k = n / 64;
     const point = (x: number, z: number): [number, number] => [n / 2 + x * k, n / 2 + z * k];
-    c.clearRect(0, 0, n, n); c.fillStyle = '#dce1bf'; c.fillRect(0, 0, n, n);
-    c.fillStyle = '#96c5b5'; c.beginPath();
-    for (let z = -100; z <= 100; z += 3) { const [x, y] = point(riverX(z) - 9, z); if (z === -100) c.moveTo(x, y); else c.lineTo(x, y); }
-    for (let z = 100; z >= -100; z -= 3) c.lineTo(...point(riverX(z) + 9, z)); c.closePath(); c.fill();
-    c.strokeStyle = '#f6f0d9'; c.lineWidth = 4.5 * k; c.lineJoin = 'round'; c.lineCap = 'round';
+    c.clearRect(0, 0, n, n); c.fillStyle = '#263b48'; c.fillRect(0, 0, n, n);
+    c.fillStyle = '#355e70'; const canal=point(8-RIVER_HALF,-WORLD_HALF);c.fillRect(canal[0],canal[1],RIVER_HALF*2*k,WORLD_HALF*2*k);
+    c.strokeStyle = '#acb5af'; c.lineWidth = 2.5 * k; c.lineJoin = 'round'; c.lineCap = 'round';
     const paths = [...PATHS, ['D_WEST', 'D', 'D_EAST'], ['F_WEST', 'F', 'F_EAST']];
     for (const ids of paths) { c.beginPath(); ids.forEach((id, i) => { const p = WAYPOINTS[id]!; if (i === 0) c.moveTo(...point(...p)); else c.lineTo(...point(...p)); }); c.stroke(); }
-    c.fillStyle = '#adb89b';
-    for (const [x, z, w, d] of [[-52, -66, 14, 8], [-65, -55, 6, 12], [-39, -55, 6, 12], [-61, -23, 7, 10], [-39, -6, 9, 7], [-64, 1, 8, 10], [-63, 21, 8, 11], [-20, 8, 7, 10], [-31, 29, 9, 7], [-58, 65, 11, 8], [46, 32, 7, 10], [46, 60, 8, 10], [-31, 69, 10, 8]]) { const p = point(x! - w! / 2, z! - d! / 2); c.fillRect(p[0], p[1], w! * k, d! * k); }
+    c.fillStyle = '#b28d68';
+    for (const h of HOUSES) { const rotated=Math.abs(Math.sin(h.yaw))>.5,w=rotated?h.d:h.w,d=rotated?h.w:h.d,p=point(h.x-w/2,h.z-d/2);c.fillRect(p[0],p[1],w*k,d*k); }
     for (const l of LOCATIONS) {
-      const [x, y] = point(l.x, l.z); c.fillStyle = this.visited.has(l.id) ? '#52765e' : '#e8edcf';
-      c.beginPath(); c.arc(x, y, mini ? 3.8 * k : 3.0 * k, 0, Math.PI * 2); c.fill();
-      if (!mini) { c.fillStyle = '#50694f'; c.font = `${n * .018}px "Microsoft YaHei",sans-serif`; c.textAlign = 'center'; c.fillText(l.name, x, y + 6.9 * k); }
+      const [x, y] = point(l.x, l.z); c.fillStyle = this.visited.has(l.id) ? '#ffcf8b' : '#728a93';
+      c.beginPath(); c.arc(x, y, mini ? .70 * k : .62 * k, 0, Math.PI * 2); c.fill();
+      if (!mini) { c.fillStyle = '#e5cba3'; c.font = `${n * .018}px "Microsoft YaHei",sans-serif`; c.textAlign = 'center'; c.fillText(l.name, x, y + 2.9 * k); }
     }
     const [px, py] = point(this.player.position.x, this.player.position.z);
-    c.save(); c.translate(px, py); c.rotate(-this.follow.yaw); c.fillStyle = '#fffdf4'; c.strokeStyle = '#5e7960'; c.lineWidth = 1.5 * k;
-    c.beginPath(); c.moveTo(0, -4.7 * k); c.lineTo(3.1 * k, 3.4 * k); c.lineTo(0, 1.6 * k); c.lineTo(-3.1 * k, 3.4 * k); c.closePath(); c.fill(); c.stroke(); c.restore();
-    if (!mini) { c.fillStyle = '#6d8467'; c.font = `${n * .018}px serif`; c.textAlign = 'right'; c.fillText('北 ↑', n - 16, 25); }
+    c.save(); c.translate(px, py); c.rotate(-this.follow.yaw); c.fillStyle = '#fff4d7'; c.strokeStyle = '#617e88'; c.lineWidth = .27 * k;
+    c.beginPath(); c.moveTo(0, -1.4 * k); c.lineTo(.9 * k, 1.0 * k); c.lineTo(0, .45 * k); c.lineTo(-.9 * k, 1.0 * k); c.closePath(); c.fill(); c.stroke(); c.restore();
+    if (!mini) { c.fillStyle = '#c9d6d8'; c.font = `${n * .018}px serif`; c.textAlign = 'right'; c.fillText('北 ↑', n - 16, 25); }
     $('visited').textContent = `已到访 ${this.visited.size} / 7 处风景`;
   }
   savePhoto() {
@@ -182,7 +183,7 @@ class Game {
     this.elapsed += dt; this.frame++;
     if (this.mode === 'title') {
       this.player.avatar.root.visible = false;
-      this.camera.position.set(-21 + Math.sin(this.elapsed * .045) * 2, 9.5, -7); this.camera.lookAt(8, 2.1, -36);
+      this.camera.position.set(34 + Math.sin(this.elapsed * .035) * 1.5, 44, 66); this.camera.lookAt(-1, 1.4, 0);
     } else {
       if (this.mode === 'playing') {
         this.accumulator = Math.min(this.accumulator + dt, 5 / 60);
@@ -196,7 +197,7 @@ class Game {
       this.shadowWasMoving = moving;
       $('heading').textContent = ['北', '西', '南', '东'][T.MathUtils.euclideanModulo(Math.round(this.follow.yaw / (Math.PI / 2)), 4)]!;
     }
-    this.town.update(this.elapsed, this.camera);
+    this.town.update(this.elapsed, this.camera, dt);
     this.renderer.info.reset(); this.scenic.render();
     this.mapTimer += dt;
     if (this.mapTimer > .3 && this.mode !== 'title') { this.mapTimer = 0; this.drawMap($<HTMLCanvasElement>('mini-map'), true); if (this.mode === 'map') this.drawMap($<HTMLCanvasElement>('large-map'), false); }
@@ -204,7 +205,7 @@ class Game {
   debug() {
     const state = () => ({ mode: this.mode, position: this.player.position.toArray(), yaw: this.follow.yaw, grounded: this.player.controller.computedGrounded(), speed: this.player.speed, visited: [...this.visited], calls: this.renderer.info.render.calls, triangles: this.renderer.info.render.triangles, geometries: this.renderer.info.memory.geometries, textures: this.renderer.info.memory.textures, frame: this.frame, camera: this.camera.position.toArray(), cameraDistance: this.follow.actualDistance });
     Object.defineProperty(window, '__tingyu', { configurable: true, value: {
-      state, teleport: (x: number, y: number, z: number) => { this.player.teleport(x, y, z); this.follow.reset(); return state(); },
+      state, layout: { spawn: SPAWN, waypoints: WAYPOINTS, locations: LOCATIONS, half: WORLD_HALF }, teleport: (x: number, y: number, z: number) => { this.player.teleport(x, y, z); this.follow.reset(); return state(); },
       face: (yaw: number) => { this.follow.yaw = yaw; },
       simulate: (input: string[], frames: number, yaw: number) => {
         const keys = new Set(input); this.follow.yaw = yaw;
@@ -221,8 +222,7 @@ class Game {
     const geos = new Set<T.BufferGeometry>(), mats = new Set<T.Material>(), textures = new Set<T.Texture>();
     this.scene.traverse(o => { if (o instanceof T.SkinnedMesh) o.skeleton.dispose(); if (o instanceof T.Mesh) { geos.add(o.geometry); for (const m of (Array.isArray(o.material) ? o.material : [o.material])) { mats.add(m); for (const value of Object.values(m)) if (value instanceof T.Texture) textures.add(value); } } });
     geos.forEach(g => g.dispose()); mats.forEach(m => m.dispose()); textures.forEach(t => t.dispose());
-    this.town?.reflectionTarget?.dispose();this.sun.shadow.map?.dispose();
-    this.town?.environmentTarget?.dispose(); this.town?.mirror?.geometry.dispose(); this.town?.mirror?.dispose();
+    this.town?.dispose();this.sun.shadow.map?.dispose();
     this.scenic.dispose(); this.physics?.world.free(); this.renderer.dispose();
   }
 }

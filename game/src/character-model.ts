@@ -1,9 +1,10 @@
 import * as T from 'three';
+import { toonGradient } from './materials';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 const unitBall = new T.SphereGeometry(1, 24, 18);
-const material = (color: string, roughness = .88) => new T.MeshStandardMaterial({ color, roughness });
+const material = (color: string, _roughness = .88) => new T.MeshToonMaterial({ color, gradientMap: toonGradient });
 type Ring = [y: number, radiusX: number, radiusZ: number, fold?: number, centerX?: number, centerZ?: number];
 
 function part(parent: T.Object3D, geometry: T.BufferGeometry, mat: T.Material, x = 0, y = 0, z = 0) {

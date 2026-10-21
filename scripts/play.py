@@ -31,10 +31,17 @@ class Handler(SimpleHTTPRequestHandler):
         data = target.read_bytes()
         compress = 'gzip' in self.headers.get('Accept-Encoding', '') and target.suffix in ('.js', '.css', '.html', '.json')
         if compress:
-            cached = self.server.compressed.get(str(target))
+            stamp = target.stat()
+            cache_key = (str(target), stamp.st_mtime_ns, stamp.st_size)
+            cached = self.server.compressed.get(cache_key)
             if cached is None:
                 cached = gzip.compress(data, compresslevel=6)
-                self.server.compressed[str(target)] = cached
+                # Rebuilding replaces asset hashes while the play server stays open.
+                # Invalidate older entries for this path, including cached index.html.
+                for key in tuple(self.server.compressed):
+                    if key[0] == str(target):
+                        del self.server.compressed[key]
+                self.server.compressed[cache_key] = cached
             data = cached
         self.send_response(200)
         self.send_header('Content-Type', content_type + ('; charset=utf-8' if target.suffix in ('.html', '.js', '.css', '.json') else ''))

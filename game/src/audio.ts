@@ -11,22 +11,22 @@ export class Ambience {
       const data = buffer.getChannelData(0); let last = 0;
       for (let i = 0; i < length; i++) { last = (last + (Math.random() * 2 - 1) * .025) / 1.025; data[i] = last; }
       const wind = this.context.createBufferSource(); wind.buffer = buffer; wind.loop = true;
-      const filter = this.context.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 680;
+      const filter = this.context.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 950;
       wind.connect(filter); filter.connect(this.gain); wind.start();
-      this.interval = setInterval(() => { if (this.enabled && !document.hidden) this.bird(); }, 6200);
+      const rainBuffer=this.context.createBuffer(1,length,this.context.sampleRate),rainData=rainBuffer.getChannelData(0);
+      for(let i=0;i<length;i++)rainData[i]=(Math.random()*2-1)*.10;
+      const rain=this.context.createBufferSource();rain.buffer=rainBuffer;rain.loop=true;
+      const highpass=this.context.createBiquadFilter();highpass.type='highpass';highpass.frequency.value=650;rain.connect(highpass);highpass.connect(this.gain);rain.start();
+      this.interval = setInterval(() => { if (this.enabled && !document.hidden) this.drip(); }, 1700);
     }
     await this.context.resume(); this.enabled = !this.enabled;
     this.gain!.gain.setTargetAtTime(this.enabled ? .35 : 0, this.context.currentTime, .3);
     return this.enabled;
   }
-  bird() {
-    const c = this.context!;
-    for (let i = 0; i < 3; i++) {
-      const o = c.createOscillator(), g = c.createGain(), start = c.currentTime + i * .19;
-      o.type = 'sine'; o.frequency.setValueAtTime(1900 + Math.random() * 500, start); o.frequency.exponentialRampToValueAtTime(3100, start + .07); o.frequency.exponentialRampToValueAtTime(2100, start + .14);
-      g.gain.setValueAtTime(0, start); g.gain.linearRampToValueAtTime(.012, start + .025); g.gain.exponentialRampToValueAtTime(.0001, start + .17);
-      o.connect(g); g.connect(this.gain!); o.start(start); o.stop(start + .2);
-    }
+  drip(){
+    const c=this.context!,o=c.createOscillator(),g=c.createGain(),t=c.currentTime;
+    o.frequency.setValueAtTime(850+Math.random()*500,t);o.frequency.exponentialRampToValueAtTime(360,t+.10);
+    g.gain.setValueAtTime(.028,t);g.gain.exponentialRampToValueAtTime(.0001,t+.14);o.connect(g);g.connect(this.gain!);o.start(t);o.stop(t+.16);
   }
   dispose() { if (this.interval) clearInterval(this.interval); void this.context?.close(); }
 }

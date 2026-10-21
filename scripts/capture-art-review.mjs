@@ -20,18 +20,23 @@ try {
   await page.goto('http://127.0.0.1:5176/', { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__tingyu && !document.getElementById('start').disabled, { timeout: 90000 });
   await page.screenshot({ path: fileURLToPath(new URL('title.png', output)) });
+  await page.locator('#intro').evaluate(el => el.style.visibility='hidden');
+  await page.screenshot({ path: fileURLToPath(new URL('overview.png', output)) });
+  await page.locator('#intro').evaluate(el => el.style.visibility='');
   await page.click('#start'); await page.waitForTimeout(1600);
   await page.screenshot({ path: fileURLToPath(new URL('courtyard.png', output)) });
   await page.keyboard.press('p');
   await page.addStyleTag({ content: '#photo-ui,#toast,#arrival{visibility:hidden!important}' });
   for (const [name, x, y, z, yaw, pitch, distance] of [
-    ['courtyard-clean', -52, 1.22, -53, 0, .30, 5.3],
-    ['character-front', -52, 1.22, -53, Math.PI, .06, 2.6],
-    ['square', -24, 1.22, -19, -.7, .22, 5.3],
-    ['river', -3, 1.22, -33, -1.16, .23, 5.5],
-    ['stone-bridge', 7, 3.35, -38, -1.57, .20, 5.0],
-    ['bamboo', 37, 1.22, -4, -.4, .25, 5.3],
-    ['tea-room', -52, 1.59, -63.1, 0, .18, 3.8],
+    ['courtyard-clean', -13, 1.26, -12.5, 0, .24, 4.7],
+    ['character-front', -13, 1.26, -12.5, Math.PI, .10, 2.8],
+    ['square', -10, 1.26, -3, .60, .22, 4.4],
+    ['river', 2.5, 1.26, -3, -1.15, .22, 4.5],
+    ['stone-bridge', 7, 2.14, -3, -1.57, .20, 4.0],
+    ['bamboo', 15, 1.26, 5, -1.57, .24, 4.6],
+    ['tea-room', -13, 1.60, -18.9, 0, .16, 3.0],
+    ['willow', -1, 1.26, 18, -2.1, .22, 4.5],
+
   ]) {
     await page.evaluate(a => { window.__tingyu.teleport(a.x, a.y, a.z); window.__tingyu.camera(a.yaw, a.pitch, a.distance); }, { x, y, z, yaw, pitch, distance });
     await page.waitForTimeout(550);
@@ -40,7 +45,7 @@ try {
   }
   // A fixed clear-sky crop catches an accidental second tone mapping pass or a
   // missing output transform when switching between direct and offscreen rendering.
-  await page.evaluate(() => { window.__tingyu.teleport(-52, 1.22, -53); window.__tingyu.camera(Math.PI, -.04, 3.6); });
+  await page.evaluate(() => { window.__tingyu.teleport(-13, 1.26, -12.5); window.__tingyu.camera(Math.PI, -.04, 3.6); });
   for (const quality of ['low', 'standard', 'high']) {
     await page.keyboard.press('Escape'); await page.keyboard.press('Escape');
     await page.selectOption('#quality', quality); await page.click('#resume'); await page.keyboard.press('p');
@@ -54,14 +59,14 @@ try {
       let total = 0; for (let i = 0; i < pixels.length; i += 4) total += .2126 * pixels[i] + .7152 * pixels[i + 1] + .0722 * pixels[i + 2];
       return total / (pixels.length / 4) / 255;
     }, sky.toString('base64'));
-    assert(luminance > .25 && luminance < .98, `Visible sky in ${quality} quality`);
+    assert(luminance > .005 && luminance < .60, `Visible sky in ${quality} quality`);
     qualityChecks.push({ quality, skyLuminance: luminance });
   }
   assert(Math.max(...qualityChecks.map(q => q.skyLuminance)) - Math.min(...qualityChecks.map(q => q.skyLuminance)) < .035, 'Sky brightness stays consistent across quality settings');
   for (const quality of ['high', 'low', 'standard']) {
     await page.keyboard.press('Escape'); await page.keyboard.press('Escape');
     await page.selectOption('#quality', quality); await page.click('#resume'); await page.keyboard.press('p');
-    await page.evaluate(() => { window.__tingyu.teleport(-3, 1.22, -33); window.__tingyu.camera(-1.16, .23, 5.5); });
+    await page.evaluate(() => { window.__tingyu.teleport(2.5, 1.26, -3); window.__tingyu.camera(-1.16, .23, 5.5); });
     await page.waitForTimeout(350);
     await page.screenshot({ path: fileURLToPath(new URL(`river-${quality}.png`, output)) });
   }

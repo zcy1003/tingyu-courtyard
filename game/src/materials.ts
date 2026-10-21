@@ -36,24 +36,6 @@ function surface(sample: (u: number, v: number) => SurfacePixel, size = 256) {
   }, size, color);
   return { map: channel(0, true), bumpMap: channel(3, false), roughnessMap: channel(4, false) };
 }
-function plasterTexture() {
-  const cloud = noise(29, 5), wash = noise(74, 16), grain = noise(381, 110);
-  return surface((u, v) => {
-    const a = cloud(u, v) - .5, b = wash(u, v) - .5, fine = grain(u, v) - .5;
-    const tone = a * 12 + b * 5 + fine * 4;
-    return [237 + tone, 231 + tone, 218 + tone, .5 + b * .13 + fine * .17, .94 + fine * .06];
-  });
-}
-function woodTexture() {
-  const cloud = noise(98, 6, 2), grain = noise(340, 95, 5);
-  return surface((u, v) => {
-    const bend = Math.sin(v * Math.PI * 2) * .006 + Math.sin(v * Math.PI * 6 + u * Math.PI * 2) * .004;
-    const lines = Math.sin((u + bend) * Math.PI * 116) * .5 + .5;
-    const fine = grain(u, v) - .5, broad = cloud(u, v) - .5;
-    const pores = Math.pow(lines, 14), tone = broad * 25 + fine * 7 - pores * 13;
-    return [153 + tone, 114 + tone * .8, 78 + tone * .55, .5 + fine * .12 - pores * .22, .77 + broad * .09 + pores * .06];
-  }, 512);
-}
 function stoneTexture(paving = false) {
   const cloud = noise(751, 5), strata = noise(401, 14), grain = noise(223, 115), fine = noise(771, 230);
   return surface((u, v) => {
@@ -69,39 +51,6 @@ function stoneTexture(paving = false) {
         .5 + (b - .5) * .18 + c * .22 - vein * .035, .90 - wet * .37 + moss * .05 + c * .04];
     }
     return [172 + tone - wet * 22 - moss * 25, 178 + tone - wet * 20 - moss * 7, 178 + tone - wet * 16 - moss * 28, .5 + (b - .5) * .2 + c * .22 - vein * .035, .84 - wet * .32 + moss * .08 + c * .06];
-  }, 512);
-}
-function roofTexture() {
-  const cloud = noise(17, 5), flecks = noise(645, 45), fine = noise(939, 120);
-  return surface((u, v) => {
-    const broad = cloud(u, v) - .5, grain = flecks(u, v) - .5;
-    const wear = (Math.sin(v * Math.PI * 28 + cloud(u, v) * 2) * .5 + .5) * 2;
-    const tone = broad * 18 + grain * 9 + wear;
-    return [111 + tone, 125 + tone, 132 + tone, .5 + grain * .2 + (fine(u, v) - .5) * .1, .84 + broad * .1 + grain * .06];
-  });
-}
-function ceramicTexture() {
-  const cloud = noise(123, 6), glaze = noise(44, 48), fine = noise(4, 140);
-  return surface((u, v) => {
-    const a = cloud(u, v), b = glaze(u, v), detail = fine(u, v);
-    const fleck = T.MathUtils.smoothstep(b * .66 + detail * .34, .56, .75);
-    const ring = Math.sin(v * Math.PI * 48) * .008, tone = (a - .5) * 16 + (b - .5) * 11;
-    return [91 + tone + fleck * 20, 133 + tone + fleck * 10, 130 + tone - fleck * 3, .5 + (b - .5) * .035 + (detail - .5) * .025 + ring, .34 + b * .14];
-  });
-}
-function groundTexture() {
-  const broad = noise(56, 6), moss = noise(130, 36), grain = noise(790, 170);
-  return canvasTexture((c, n) => {
-    const pixels = c.createImageData(n, n);
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-      const u = x / n, v = y / n, a = broad(u, v), b = moss(u, v), tone = (grain(u, v) - .5) * 13;
-      const i = (y * n + x) * 4;
-      pixels.data[i] = 133 + a * 27 + b * 15 + tone;
-      pixels.data[i + 1] = 142 + a * 25 + b * 14 + tone;
-      pixels.data[i + 2] = 100 + a * 22 + b * 10 + tone;
-      pixels.data[i + 3] = 255;
-    }
-    c.putImageData(pixels, 0, 0);
   }, 512);
 }
 type FoliageKind = 'crown' | 'willow' | 'bush' | 'flower' | 'blossom';
@@ -155,50 +104,48 @@ function foliageTexture(kind: FoliageKind) {
     }
   }, 512);
 }
-const rough = (color: T.ColorRepresentation, roughness = .85) => new T.MeshStandardMaterial({ color, roughness });
+export const toonGradient = new T.DataTexture(new Uint8Array([75, 132, 192, 245]), 4, 1, T.RedFormat);
+toonGradient.minFilter = toonGradient.magFilter = T.NearestFilter; toonGradient.needsUpdate = true;
+const toon = (color: T.ColorRepresentation) => new T.MeshToonMaterial({ color, gradientMap: toonGradient });
 export function makeMaterials() {
-  const wind = { value: 0 };
-  const plasterMaps = plasterTexture(), woodMaps = woodTexture(), stoneMaps = stoneTexture(), pavingMaps = stoneTexture(true), roofMaps = roofTexture();
-  const wall = new T.MeshStandardMaterial({ ...plasterMaps, color: '#fffdf8', roughness: 1, bumpScale: .012 });
-  const wood = new T.MeshStandardMaterial({ ...woodMaps, color: '#ffffff', roughness: 1, bumpScale: .013 });
-  const stone = new T.MeshStandardMaterial({ ...stoneMaps, color: '#ffffff', roughness: 1, bumpScale: .025 });
-  const leaf = ['#73914e', '#8ca65b', '#a3b96b', '#5b7b42', '#789651'].map(color => new T.MeshStandardMaterial({ color, side: T.DoubleSide, roughness: .92 }));
+  const wind = { value: 0 }, stoneMaps = stoneTexture(true);
+  // Fine noise no longer dominates the palette: the lighting and silhouette do the work.
+  const wall = toon('#d0cbbb'), wood = toon('#72503e'), stone = toon('#91a4aa');
+  const leaf = ['#56846a', '#6e9676', '#839c7b', '#396653', '#4d7965'].map(color => {
+    const material = toon(color); material.side = T.DoubleSide; return material;
+  });
   const foliage = (kind: FoliageKind) => {
-    const material = new T.MeshStandardMaterial({ map: foliageTexture(kind), color: '#ffffff', alphaTest: .38, alphaToCoverage: true, side: T.DoubleSide, roughness: .92 });
+    const material = new T.MeshToonMaterial({ map: foliageTexture(kind), color: '#b3cab3', gradientMap: toonGradient, alphaTest: .4, side: T.DoubleSide });
     material.onBeforeCompile = shader => {
       shader.uniforms.townTime = wind; shader.vertexShader = 'uniform float townTime;\n' + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
       #ifdef USE_INSTANCING
-      float sway = sin(townTime * 1.25 + instanceMatrix[3].x * .4 + instanceMatrix[3].z * .35);
-      transformed.x += sway * .035 * (position.y + .55);
-      transformed.z += cos(townTime + instanceMatrix[3].x * .2) * .016;
+      transformed.x += sin(townTime + instanceMatrix[3].x * .4 + instanceMatrix[3].z * .35) * .024 * (position.y + .55);
       #endif`);
     };
-    material.customProgramCacheKey = () => 'courtyard-foliage-wind-v2';
-    return material;
+    material.customProgramCacheKey = () => 'rain-night-foliage'; return material;
   };
+  const red = toon('#a35042');
+  const lantern = new T.MeshBasicMaterial({ color: new T.Color(.80,.055,.025) });
+  const lanternRib = new T.MeshBasicMaterial({ color: new T.Color(.24,.066,.027) });
+  const paperLantern = new T.MeshBasicMaterial({ color: new T.Color(1.15,.70,.28) });
   return {
-    wall, wood, stone, leaf, wind,
+    wall, wood, stone, leaf, wind, red, lantern, lanternRib, paperLantern,
     crown: foliage('crown'), willow: foliage('willow'), bush: foliage('bush'), flowerBush: foliage('flower'), blossom: foliage('blossom'),
-    plaster: new T.MeshStandardMaterial({ ...plasterMaps, color: '#e3ddcf', roughness: 1, bumpScale: .014 }),
-    darkWood: new T.MeshStandardMaterial({ ...woodMaps, color: '#b4a18a', roughness: 1, bumpScale: .013 }),
-    woodLight: new T.MeshStandardMaterial({ ...woodMaps, color: '#fff0ce', roughness: 1, bumpScale: .013 }),
-    roof: ['#ffffff', '#f5f7f8', '#e9edef', '#f9f7f2'].map(color => new T.MeshStandardMaterial({ ...roofMaps, color, roughness: 1, bumpScale: .014, side: T.DoubleSide })),
-    roofEdge: new T.MeshStandardMaterial({ ...roofMaps, color: '#ffffff', roughness: 1, bumpScale: .016 }),
-    mortar: rough('#8a9281', .96),
-    paving: ['#f4f3e9', '#dfe7e2', '#fff8e8', '#d5e0dc', '#ebebde'].map((color, i) => {
-      // The five paver families vary their UV phase as well as their tint.
-      const maps = { map: pavingMaps.map.clone(), bumpMap: pavingMaps.bumpMap.clone(), roughnessMap: pavingMaps.roughnessMap.clone() };
-      for (const texture of Object.values(maps)) { texture.offset.set((i * .29) % 1, (i * .43) % 1); texture.needsUpdate = true; }
-      return new T.MeshStandardMaterial({ ...maps, color, roughness: 1 - i % 3 * .025, bumpScale: .021 });
-    }),
-    grass: rough('#8b9d69'), ground: new T.MeshStandardMaterial({ color: '#ffffff', map: groundTexture(), roughness: 1 }), soil: rough('#85765d', 1),
-    red: rough('#c87650', .84), gold: rough('#c9a365', .72),
-    ceramic: new T.MeshPhysicalMaterial({ ...ceramicTexture(), color: '#ffffff', roughness: 1, bumpScale: .008, clearcoat: .28, clearcoatRoughness: .3 }),
-    cream: rough('#e8dfc2'), pink: rough('#e7bdba'), flower: rough('#f2ebd6'),
-    warm: new T.MeshStandardMaterial({ color: '#f4cb8a', emissive: '#ffd493', emissiveIntensity: .35, roughness: .8 }),
-    glass: new T.MeshStandardMaterial({ color: '#b8c8bc', transparent: true, opacity: .15, roughness: .3, depthWrite: false }),
-    black: rough('#35433c'),
+    plaster: toon('#b6bdaf'), darkWood: toon('#3c302e'), woodLight: toon('#aa8155'),
+    roof: ['#4b6c80', '#5c7b8c', '#68899a', '#456376'].map(color => { const m = toon(color); m.side = T.DoubleSide; return m; }),
+    roofEdge: toon('#718e9c'), brick: ['#70868d', '#617d88', '#7c9296', '#59717e'].map(toon),
+    mortar: toon('#364c58'),
+    paving: ['#566d7a', '#687d88', '#5e7682', '#7c909a', '#506a78'].map((color, i) => new T.MeshStandardMaterial({
+      color, roughness: .34 + i * .027, metalness: .10, bumpMap: stoneMaps.bumpMap, bumpScale: .012,
+    })),
+    grass: toon('#3d685b'), ground: new T.MeshStandardMaterial({ color: '#405866', roughness: .32, metalness: .14 }), soil: toon('#293f38'),
+    gold: toon('#c4a36c'), ceramic: new T.MeshPhysicalMaterial({ color: '#567f85', roughness: .23, metalness: .12, clearcoat: .45, clearcoatRoughness: .22 }),
+    cream: toon('#e6d8b7'), pink: toon('#d7a3ad'), flower: toon('#d9d6b2'),
+    warm: new T.MeshStandardMaterial({ color: '#ffe0a3', emissive: '#ffd495', emissiveIntensity: 1.7, roughness: .55 }),
+    paper: new T.MeshToonMaterial({ color: '#f2d9a9', emissive: '#ffb765', emissiveIntensity: .28, gradientMap: toonGradient }),
+    glass: new T.MeshPhysicalMaterial({ color: '#b8d5ce', transparent: true, opacity: .08, roughness: .08, metalness: .1, depthWrite: false, side: T.DoubleSide }),
+    black: toon('#24363f'),
   };
 }
 export type Materials = ReturnType<typeof makeMaterials>;

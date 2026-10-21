@@ -1,13 +1,18 @@
 # 听雨小镇游戏工程
 
-本目录是听雨小镇 v0.1.0 的 Vite 根目录，包含可运行的第三人称漫游游戏。
+本目录是 v0.2.0 的 Vite 根目录。在仓库根目录运行 `npm.cmd run dev`，访问 `http://127.0.0.1:5173/`。
 
-在仓库根目录运行 `npm run dev`；访问 `http://127.0.0.1:5173/`。
+运行时代码位于 `src/`：
 
-准备工作入口：[`../docs/preproduction/README.md`](../docs/preproduction/README.md)。
+- `config.ts`：56×56 米街区、建筑列表、七处地点与路线；地图绘制共用这些坐标。
+- `world.ts` / `environment.ts` / `builder.ts`：底座、河岸、桥、建筑、陈设、轮廓线与区域实例化。
+- `materials.ts`：赛璐璐色阶、干净的夜色材质、湿石与陶器；`environment-geometry.ts`：瓦、石板、陶器与叶簇。
+- `night-lighting.ts`：暖灯位置、灯晕、地面光晕，以及按距离选择的局部点光源。
+- `wet-surfaces.ts`：独立的湿地/河道反射面、波纹、更新节流与画质设置；`rain.ts`：避开屋顶的雨丝。
+- `rendering.ts`：线性空间内的接触阴影、细轮廓与四分之一分辨率柔辉，统一输出颜色变换。
+- `character-model.ts` / `player.ts` / `camera.ts`：人物、Rapier 行走与镜头避障；`main.ts`：游戏生命周期和界面。
+- `audio.ts`：程序合成雨声与滴水；`atmosphere.ts`：夜空；`waterfront.ts`：舟船。
 
-运行时代码位于 `src/`：`main.ts` 负责游戏生命周期与界面，`world.ts` / `environment.ts` 构建环境，`builder.ts` 做区域实例化，`character.ts` / `player.ts` / `camera.ts` 负责角色、移动与镜头，`physics.ts` 包装 Rapier，`materials.ts` 生成材质与植被遮罩，`audio.ts` 合成环境声。
+模型、材质与声音在代码中生成，不依赖外部 GLB/贴图/音频下载。初版 `index.html`、`src/`、`vendor/` 和 Python 构建流程保持为独立基线。
 
-2026-10-21 画面更新还包含 `character-model.ts` 的人物曲面与配件、`environment-geometry.ts` 的石板/陶器/叶簇几何、`atmosphere.ts` 的天空与远山、`waterfront.ts` 的舟船，以及 `rendering.ts` 的深度接触阴影。水面平面倒影与三档质量策略位于 `world.ts`。变更与实机证据见 [`../docs/art-refinement-2026-10-21.md`](../docs/art-refinement-2026-10-21.md)。
-
-当前模型、材质与声音在代码中生成，不需要外部 GLB/贴图/音频下载。未来文件资产可以放在 `public/assets/`。原项目根目录的 `index.html`、`src/`、`vendor/` 和 Python 构建流程是旧版小院基线。
+本轮设计和验证见 [`../docs/delivery-v0.2.0.md`](../docs/delivery-v0.2.0.md)。

@@ -1,10 +1,12 @@
 import * as T from 'three';
 import { Builder } from './builder';
-import { GROUND, PATHS, WAYPOINTS, riverX, rng } from './config';
+import { GROUND, HOUSES, WORLD_HALF, rng } from './config';
+import { NightLighting } from './night-lighting';
 import { labelTexture, type Materials } from './materials';
 import { foliageSpray, lanternShell, lilyLeaf, mossPatch, pavingStone, vessel } from './environment-geometry';
 
 export class Environment {
+  roofs: { inverse: T.Matrix4; w: number; d: number; eave: number; rise: number; y: number }[] = [];
   random = rng(7613);
   detailRandom = rng(9471);
   potGeo = vessel();
@@ -22,7 +24,7 @@ export class Environment {
   mossGeo = mossPatch();
   pavingAreas:{inverse:T.Matrix4;w:number;d:number}[]=[];
   grassGeo = new T.BufferGeometry();
-  constructor(public b: Builder, public m: Materials) {
+  constructor(public b: Builder, public m: Materials, public lights: NightLighting) {
     this.petalGeo.rotateX(-Math.PI / 2);
     const v:number[]=[];
     for(let i=0;i<5;i++){
@@ -41,6 +43,7 @@ export class Environment {
   }
   roof(w: number, d: number, eave = 3.55, rise = 1.1) {
     const b = this.b, m = this.m, half = d / 2;
+    this.roofs.push({ inverse: b.frame.clone().invert(), w, d, eave, rise, y: b.frame.elements[13]! });
     const corner = d > 2.5 ? .30 : .15;
     const profile = (t: number, x = 0) => eave + rise * (1 - t) - .20 * Math.sin(Math.PI * t) + .21 * t ** 7 + corner * (Math.abs(x) / (w / 2)) ** 8 * t ** 3;
     const vertices: number[] = [], indices: number[] = [];
@@ -93,7 +96,7 @@ export class Environment {
   window(x: number, y: number, z: number, w = 1.8, h = 1.7, clear = false) {
     const b = this.b, m = this.m;
     if(clear)b.box(x,y,z,w,h,.035,m.glass,true);
-    else {b.box(x, y, z, w, h, .07, m.darkWood);b.box(x, y, z + .045, w - .13, h - .13, .025, m.cream);}
+    else {b.box(x, y, z, w, h, .07, m.darkWood);b.box(x, y, z + .045, w - .13, h - .13, .025, m.paper);}
     for (const s of [-1, 1]) { b.box(x + s * w / 2, y, z + .07, .075, h + .12, .09, m.wood); b.box(x, y + s * h / 2, z + .07, w + .14, .075, .09, m.wood); }
     for (let i = -2; i <= 2; i++) b.box(x + i * w / 6, y, z + .1, .028, h, .04, m.wood);
     for (let i = -2; i <= 2; i++) b.box(x, y + i * h / 6, z + .1, w, .026, .04, m.wood);
@@ -102,15 +105,18 @@ export class Environment {
     b.box(x, y + h / 2 + .055, z + .055, w + .23, .085, .18, m.darkWood);
     for (const s of [-1, 1]) b.box(x + s * (w / 2 - .11), y, z + .14, .026, h - .12, .045, m.woodLight);
   }
-  lantern(x: number, y: number, z: number, size = 1) {
+  lantern(x: number, y: number, z: number, size = 1, paper = false) {
     const b = this.b, m = this.m;
-    b.put(this.lanternGeo, m.red, x, y, z, size, size, size);
+    const position = new T.Vector3(x, y, z).applyMatrix4(b.frame);
+    this.lights.add(position, 5.5 * size, 5.6, '#ffae69');
+    this.lights.pool(position.x, position.z, 2.5 * size, 2.6 * size);
+    b.put(this.lanternGeo, paper ? m.paperLantern : m.lantern, x, y, z, size, size, size);
     for (const s of [-1, 1]) b.cyl(x, y + s * .35 * size, z, .14 * size, .06 * size, m.gold);
     for (let i = 0; i < 12; i++) {
       const a = i / 12 * Math.PI * 2;
       for (let j = 0; j < 7; j++) {
         const t0 = Math.PI * (.12 + .76 * j / 7), t1 = Math.PI * (.12 + .76 * (j + 1) / 7);
-        b.beam([x + Math.sin(a) * Math.sin(t0) * .303 * size, y + Math.cos(t0) * .405 * size, z + Math.cos(a) * Math.sin(t0) * .303 * size], [x + Math.sin(a) * Math.sin(t1) * .303 * size, y + Math.cos(t1) * .405 * size, z + Math.cos(a) * Math.sin(t1) * .303 * size], .0038 * size, m.gold);
+        b.beam([x + Math.sin(a) * Math.sin(t0) * .303 * size, y + Math.cos(t0) * .405 * size, z + Math.cos(a) * Math.sin(t0) * .303 * size], [x + Math.sin(a) * Math.sin(t1) * .303 * size, y + Math.cos(t1) * .405 * size, z + Math.cos(a) * Math.sin(t1) * .303 * size], .0055 * size, m.lanternRib);
       }
     }
     b.beam([x, y + .38 * size, z], [x, y + .75 * size, z], .012, m.darkWood);
@@ -130,6 +136,16 @@ export class Environment {
       b.box(0, .95, -.2, 1.6, .13, .06, m.woodLight);
     });
   }
+  chair(x:number,y:number,z:number,yaw:number){
+    const b=this.b,m=this.m;
+    b.transform(x,y,z,yaw,()=>{
+      b.box(0,.46,0,.70,.10,.66,m.wood);b.box(0,.52,0,.57,.035,.54,m.woodLight);
+      for(const sx of [-1,1])for(const sz of [-1,1])b.box(sx*.27,.23,sz*.24,.075,.46,.075,m.darkWood);
+      for(const sx of [-1,1]){b.box(sx*.32,.92,-.27,.065,1.03,.065,m.wood);b.box(sx*.32,.77,.01,.07,.07,.65,m.wood);b.box(sx*.32,.62,.28,.05,.30,.05,m.wood);}
+      b.box(0,1.43,-.27,.75,.09,.09,m.wood);b.box(0,1.08,-.27,.18,.62,.06,m.woodLight);
+      b.put(this.ringGeo,m.gold,0,1.12,-.23,.12,.15,.25);b.box(0,.17,0,.54,.055,.48,m.wood);
+    });
+  }
   building(x: number, z: number, w: number, d: number, yaw = 0, name = '', open = false, floors = 1) {
     const b = this.b, m = this.m;
     b.transform(x, GROUND, z, yaw, () => {
@@ -137,6 +153,7 @@ export class Environment {
       this.pavingRect(0,front+1.6,w+1,3.2);
       b.box(0, .15, 0, w + .25, .3, d + .25, m.stone, true);
       b.box(0, .33, 0, w, .08, d, m.woodLight, true);
+      for(let i=0;i<Math.floor(w/.3);i++)b.box(-w/2+.15+i*.3,.376,0,.28,.012,d-.15,i%3?m.woodLight:m.wood);
       b.box(0, height / 2 + .32, -front, w, height, .24, m.wall, true);
       for (const s of [-1, 1]) b.box(s * w / 2, height / 2 + .32, 0, .23, height, d, m.wall, true);
       if (open) {
@@ -151,8 +168,8 @@ export class Environment {
       } else b.box(0, height / 2 + .32, front, w, height, .18, m.wall, true);
       for (let i = 0; i < 3; i++) b.box(0, .06 + i * .12, front + .9 - i * .3, 3.7 - i * .2, .12, .42, m.stone, true);
       for (const s of [-1, 1]) {
-        b.box(s * w / 2, 1.85, front + .14, .17, 3.15, .17, m.wood);
-        b.box(s * 1.5, 1.85, front + .14, .15, 3.15, .15, m.wood);
+        b.box(s * w / 2, 1.85, front + .14, .17, 3.15, .17, m.red);
+        b.box(s * 1.5, 1.85, front + .14, .15, 3.15, .15, m.red);
         this.window(s * (w / 4 + .5), 1.9, front + .12, Math.min(2.5, w / 2 - 2), 1.7,open);
         this.lantern(s * (w / 2 - .6), 2.85, front + .6, .85);
       }
@@ -190,6 +207,13 @@ export class Environment {
         b.transform(0,0,front+.4,0,()=>this.roof(w + .9, 2.5, 3.5, .25));
       }
       this.roof(w + 1.1, d + 1.25, height + .35, floors === 2 ? 1.05 : 1.2);
+      // Rear elevations face other walkable lanes too, so they receive the same care.
+      b.transform(0,0,-front-.16,Math.PI,()=>{
+        for(const side of [-1,1])this.window(side*w*.25,1.9,0,Math.min(1.65,w*.24),1.45);
+        if(floors===2)for(const side of [-1,1])this.window(side*w*.25,4.8,0,1.6,1.5);
+        b.box(0,.2,.04,w,.35,.25,m.mortar);
+        for(let i=0;i<Math.floor(w/.65);i++)b.box(-w/2+.32+i*.65,.22,.19,.61,.25,.08,m.brick[i%4]!);
+      });
       for(const side of [-1,1]){
         const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute([side*w/2,height+.32,-front,side*w/2,height+.32,front,side*w/2,height+1.45,0],3));geo.computeVertexNormals();
         const material=m.wall.clone();material.side=T.DoubleSide;b.mesh(geo,material);
@@ -197,9 +221,9 @@ export class Environment {
       }
       for (let i = 0; i < Math.floor(w / .36); i++) b.box(-w / 2 + i * .36, height + .19, front + .12, .065, .13, .82, m.woodLight);
       if (open) {
-        for (const s of [-1, 1]) b.transform(s * 1.4, 0, front, s * -.95, () => { this.window(s * -.57, 1.98, 0, 1.12, 2.25); });
+        for (const s of [-1, 1]) b.transform(s * 1.4, 0, front, s * -.95, () => { this.window(s * -.57, 1.98, 0, 1.12, 2.25, true); });
         this.table(0, .38, -.2, 2, 1.2);
-        for (const sx of [-1.65, 1.65]) this.bench(sx, -.2, sx > 0 ? -Math.PI / 2 : Math.PI / 2);
+        for (const sx of [-1.65, 1.65]) this.chair(sx, .38, -.2, sx > 0 ? Math.PI / 2 : -Math.PI / 2);
         for (const xx of [-.5, .3, .6]) { b.cyl(xx, 1.22, .1, .085, .12, m.cream); b.cyl(xx, 1.287, .1, .065, .008, m.darkWood); }
         b.ball(0, 1.28, -.3, .18, .15, .16, m.ceramic); b.cyl(0, 1.44, -.3, .1, .04, m.gold);
         this.table(0, .38, -front + .6, w * .5, .55);
@@ -209,9 +233,11 @@ export class Environment {
         for(let j=0;j<3;j++)for(let i=0;i<3;i++)b.ball(w*.32-.65+i*.65,.85+j*.6,-front+.88,.14,.22,.14,i%2?m.cream:m.ceramic);
         for(let i=0;i<3;i++)b.transform(-w*.3+i*.6,0,-front+1.3,-.2+(i%2)*.4,()=>{b.box(0,1.7,0,.62,2.2,.07,m.darkWood);b.box(0,1.75,.05,.52,1.9,.025,m.cream);for(let j=0;j<4;j++)b.put(b.leafGeo,m.leaf[3]!,this.r(-.2,.2),1.15+j*.4,.08,.6,.6,.4,0,j);});
         for (const xx of [-w * .3, w * .3]) this.pot(xx, -front + .8, 1.1, false, 1.18);
-        this.lantern(0, 2.8, -.3, .8);
-        const light = new T.PointLight('#ffe0aa', 16, 10, 2);
-        light.position.set(0, 2.8, -.2).applyMatrix4(b.frame); b.scene.add(light);
+        this.lantern(0, 2.8, -.3, .8, true);
+        this.lights.add(new T.Vector3(0, 2.6, -.2).applyMatrix4(b.frame), 21, 7, '#ffd28e', false);
+        this.lights.add(new T.Vector3(0, 2.4, front+.35).applyMatrix4(b.frame), 8, 5.8, '#ffc58b', false);
+        const door = new T.Vector3(0, 0, front+1.0).applyMatrix4(b.frame);
+        this.lights.pool(door.x,door.z,5,3.5,yaw);
       }
       this.pot(-w / 2 + .4, front + 1.4, .8);
       this.pot(w / 2 - .4, front + 1.1, .7);
@@ -234,7 +260,11 @@ export class Environment {
   wall(x: number, z: number, length: number, yaw = 0, height = 2.7) {
     const b = this.b, m = this.m;
     b.transform(x, GROUND, z, yaw, () => {
-      b.box(0, height / 2, 0, length, height, .32, m.wall, true);
+      b.box(0, height / 2, 0, length, height, .32, m.mortar, true);
+      for(let row=0;row<Math.floor(height/.29);row++)for(let col=0;col<Math.ceil(length/.62);col++){
+        const left=-length/2+col*.62+(row%2)*.31, width=Math.min(.59,length/2-left);
+        if(width>.04)b.box(left+width/2,.145+row*.29,0,width,.265,.35,m.brick[(col+row)%4]!);
+      }
       b.box(0, .18, 0, length + .07, .36, .42, m.mortar);
       b.box(0, height + .06, 0, length + .1, .12, .55, m.roofEdge);
       for (let i = 0; i < length; i += .32) b.put(b.tileGeo, m.roof[Math.floor(this.random() * 4)]!, -length / 2 + i, height + .12, 0, 1.3, .8, .65);
@@ -436,9 +466,9 @@ export class Environment {
     const b=this.b,m=this.m,p=new T.Vector3();
     const inside=(x:number,z:number)=>this.pavingAreas.some(a=>{p.set(x,0,z).applyMatrix4(a.inverse);return Math.abs(p.x)<a.w/2&&Math.abs(p.z)<a.d/2;});
     let row = 0;
-    for (let z = -86; z < 86;) {
+    for (let z = -WORLD_HALF+.3; z < WORLD_HALF-.3;) {
       const depth = .50 + (row % 3) * .035;
-      for (let x = -87 - (row % 2) * .38; x < 87;) {
+      for (let x = -WORLD_HALF+.25 - (row % 2) * .38; x < WORLD_HALF-.25;) {
         const width = this.r(.64, 1.04), cx = x + width / 2, cz = z + depth / 2;
         x += width;
         if(!inside(cx,cz))continue;
@@ -469,160 +499,103 @@ export class Environment {
       for (const s of [-1, 1]) this.lantern(s * 2 * size, 3.0, 2 * size, .75);
     });
   }
+  streetLamp(x: number, z: number, yaw = 0) {
+    const b=this.b,m=this.m;
+    b.transform(x,GROUND,z,yaw,()=>{
+      b.cyl(0,.2,0,.19,.4,m.stone); b.cyl(0,1.9,0,.065,3.8,m.roofEdge);
+      b.beam([0,3.75,0],[-.15,4.12,0],.055,m.black);b.beam([-.15,4.12,0],[-.8,4.1,0],.055,m.black);
+      b.put(b.coneGeo,m.roofEdge,-.83,3.94,0,.33,.22,.33);b.ball(-.83,3.80,0,.17,.07,.17,m.warm);
+      this.lights.add(new T.Vector3(-.83,3.75,0).applyMatrix4(b.frame),22,8,'#ffdc9d');
+      const floor=new T.Vector3(-.8,0,0).applyMatrix4(b.frame);this.lights.pool(floor.x,floor.z,4,4);
+      b.box(0,2.25,.1,.5,.35,.08,m.darkWood);this.sign('听雨巷',0,2.25,.15,.45,.25,true);
+    });
+  }
+  bicycle(x:number,z:number,yaw=0) {
+    const b=this.b,m=this.m;
+    b.transform(x,GROUND+.04,z,yaw,()=>{
+      const wheel=new T.TorusGeometry(.34,.029,6,32);
+      for(const xx of [-.61,.61]){
+        b.put(wheel,m.black,xx,.36,0);b.put(this.ringGeo,m.roofEdge,xx,.36,0,.30,.30,.18);
+        for(let j=0;j<12;j++){const a=j/12*Math.PI*2;b.beam([xx,.36,.0],[xx+Math.sin(a)*.29,.36+Math.cos(a)*.29,0],.004,m.roofEdge);}
+      }
+      for(const [a,c]of [[[-.61,.36,0],[-.12,.82,0]],[[-.12,.82,0],[.12,.36,0]],[[.12,.36,0],[-.61,.36,0]],[[.12,.36,0],[.45,.95,0]],[[.45,.95,0],[-.12,.82,0]],[[.45,.95,0],[.61,.36,0]]] as [number[],number[]][])b.beam(a,c,.025,m.leaf[1]!);
+      b.box(-.15,.96,0,.27,.06,.17,m.darkWood);b.beam([-.12,.7,0],[-.15,.96,0],.022,m.roofEdge);
+      b.beam([.45,.95,0],[.43,1.10,0],.025,m.roofEdge);b.beam([.43,1.10,-.2],[.43,1.10,.2],.022,m.roofEdge);
+      b.box(.67,.84,0,.38,.035,.32,m.gold);for(const side of [-1,1]){b.box(.67,1.0,side*.16,.4,.29,.018,m.gold);b.box(.67+side*.2,1,0,.018,.29,.32,m.gold);}
+      b.beam([.05,.35,0],[.03,.02,.18],.015,m.black);
+    });
+  }
+  doorstep(x:number,z:number,yaw=0) {
+    const b=this.b,m=this.m;
+    b.transform(x,GROUND,z,yaw,()=>{
+      // Woven mat, umbrella rack, rain chain and ceramic water bowl.
+      b.box(0,.06,0,1.0,.025,.55,m.woodLight);
+      for(let i=0;i<16;i++)b.box(-.48+i*.062,.075,0,.017,.012,.53,m.darkWood);
+      b.box(1.25,.12,0,.60,.05,.38,m.wood);b.box(1.25,.65,0,.60,.06,.38,m.wood);
+      for(const side of [-1,1])b.box(1.25+side*.25,.36,0,.045,.65,.32,m.darkWood);
+      for(let i=0;i<3;i++){const xx=1.1+i*.15;b.beam([xx,.16,0],[xx+.05,1.2,0],.018,m.woodLight);b.put(b.coneGeo,i%2?m.roofEdge:m.red,xx,.7,0,.07,.68,.07,0,0,.06);b.put(this.ringGeo,m.wood,xx+.1,1.2,0,.065,.065,.3);}
+      for(let i=0;i<19;i++)b.put(this.ringGeo,m.gold,-1.3,3.25-i*.15,-.45,.055,.065,.3,0,i%2*Math.PI/2);
+      b.put(this.jarGeo,m.stone,-1.3,.02,-.45,.45,.25,.45);
+    });
+  }
   build() {
-    const b = this.b, m = this.m;
-    this.pavingRect(-52, -55, 33, 29);
-    for (const ids of PATHS) for (let i = 1; i < ids.length; i++) if(ids[i-1]!=='A')this.path(WAYPOINTS[ids[i - 1]!]!, WAYPOINTS[ids[i]!]!);
-    this.pavingRect(-24, -19, 18, 16);
-    this.building(-52, -66, 14, 8, 0, '听 雨 堂', true);
-    this.building(-65, -55, 12, 6, Math.PI / 2, '竹 影');
-    this.building(-39, -55, 12, 6, -Math.PI / 2, '云 间');
-    this.wall(-52, -72, 34); this.wall(-69, -56, 32, Math.PI / 2); this.wall(-35, -56, 32, Math.PI / 2);
-    this.wall(-61.7, -40, 14.6); this.wall(-42.3, -40, 14.6); this.gate(-52, -40);
-    const houses: [number, number, number, number, number, string, number][] = [
-      [-61, -23, 10, 7, Math.PI / 2, '春 和 茶 铺', 1], [-39, -6, 9, 7, Math.PI, '花 间', 2],
-      [-64, 1, 10, 8, Math.PI / 2, '青 禾', 1], [-63, 21, 11, 8, Math.PI / 2, '松 风', 2],
-      [-20, 8, 10, 7, Math.PI / 2, '临 水 居', 2], [-31, 29, 9, 7, Math.PI, '归 云', 1],
-      [-58, 65, 11, 8, 0, '南 山', 1], [46, 32, 10, 7, -Math.PI / 2, '竹 里', 2],
-      [46, 60, 10, 8, -Math.PI / 2, '见 山', 1], [-77, -19, 8, 7, Math.PI / 2, '小 满', 1],
-      [-31, 69, 10, 8, Math.PI, '枕 溪', 2],
-      [-19,-33,10,7,0,'一 叶 茶',1],[-12,-57,11,8,0,'望 溪',2],[34,-68,10,7,Math.PI,'云 水',1],
-    ];
-    houses.forEach(([x, z, w, d, yaw, name, floors]) => this.building(x, z, w, d, yaw, name, name.includes('茶'), floors));
-    this.pavilion(44, -4); this.pavilion(49, -54, .8);
-    // The courtyard keeps a clear central route, with layered planting along its walls.
-    for (const [x, z] of [[-64, -44], [-40, -44], [-64, -60], [-41, -61]]) this.bamboo(x!, z!, .85);
-    b.transform(-61, GROUND, -51, 0, () => {
-      this.waterJar(0, 0, 2);
-    });
-    for (let i = 0; i < 18; i++) {
-      const x = i % 2 ? -64 + this.r(-1, 1) : -40 + this.r(-1, 1), z = this.r(-60, -43);
-      this.bush(x, z, this.r(.6, 1), true);
+    const b=this.b,m=this.m;
+    // One continuous, paved block. Every route sits between nearby, inhabited facades.
+    this.pavingRect(-11.55,0,32.6,55.4);this.pavingRect(19.6,0,16.1,55.4);
+    for(const h of HOUSES)this.building(h.x,h.z,h.w,h.d,h.yaw,h.name,h.open,h.floors);
+    this.wall(-13,-25.5,21,0,2.4);this.wall(-23.5,-16.2,18.6,Math.PI/2,2.3);this.wall(-2.5,-16.2,18.6,Math.PI/2,2.3);
+    this.wall(-19.35,-7,8.3,0,2.15);this.wall(-6.65,-7,8.3,0,2.15);this.gate(-13,-7);
+    this.wall(-26,-12,26,Math.PI/2,2.1);this.wall(-26,17,16,Math.PI/2,2.1);
+    this.wall(-18.5,26,15,0,2.1);this.wall(26,17,15,Math.PI/2,2.1);
+    // A compact covered waterside pavilion and an L-shaped return veranda.
+    this.pavilion(21,18.5,.8);
+    b.transform(-.6,GROUND,22,0,()=>{for(const x of [-4,0,4])b.box(x,1.55,0,.15,3.1,.15,m.wood,true);this.roof(10.2,1.9,3.15,.4);this.bench(-2,0);this.bench(2,0);});
+    // The courtyard garden is deliberately framing the walking space.
+    for(const [x,z]of [[-18,-11],[-8,-11],[-18,-16],[-8,-16]]){
+      b.box(x!,GROUND+.1,z!,2.3,.2,2.6,m.stone);b.box(x!,GROUND+.21,z!,2.07,.03,2.37,m.soil);
+      this.plantingFloor(x!,z!,1.9,2.2,GROUND+.24);
+      for(let j=0;j<3;j++)this.bush(x!+this.r(-.7,.7),z!+this.r(-.8,.8),.55,j%2===0,GROUND+.22);
     }
-    this.tree(-28, -23, 1.15); this.tree(-60, -33, .95, true);
-    this.tree(-32, -53, 1.15, true);
-    this.tree(-10, -23, 1.25, true); this.tree(-12, 24, 1.25, true); this.tree(-21, 48, 1.05, true);
-    this.tree(27, -23, 1.2, true); this.tree(26, 20, 1.1, true); this.tree(25, 66, 1.2, true);
-    // Planting beds frame the courtyard rather than filling the main walking corridor.
-    for(const x of [-61,-43])for(const z of [-47,-55]){
-      b.box(x,GROUND+.09,z,3.8,.18,3.4,m.mortar);
-      b.box(x,GROUND+.19,z,3.55,.04,3.15,m.soil);
-      for(const s of [-1,1]){b.box(x+s*1.9,GROUND+.22,z,.17,.24,3.6,m.stone);b.box(x,GROUND+.22,z+s*1.7,3.9,.24,.17,m.stone);}
-      this.plantingFloor(x, z, 3.3, 2.9, GROUND + .215);
-      for(let i=0;i<7;i++)this.bush(x+this.r(-1.2,1.2),z+this.r(-1.1,1.1),this.r(.4,.65),true,GROUND+.2);
-      for(let i=0;i<5;i++)b.put(this.clumpGeo,m.stone,x+this.r(-1.5,1.5),GROUND+.26,z+this.r(-1.3,1.3),this.r(.18,.38),this.r(.15,.31),this.r(.2,.35),this.r(0,1),this.r(0,6));
-    }
-    this.tree(-62,-58,.8);
-    for(const x of [-57.5,-46.5]){
-      b.box(x,GROUND+.11,-56,3.1,.22,4.6,m.stone);
-      b.box(x,GROUND+.23,-56,2.9,.04,4.4,m.soil);
-      this.plantingFloor(x, -56, 2.7, 4.2, GROUND + .255);
-      for(let i=0;i<11;i++)this.bush(x+this.r(-1.2,1.2),-56+this.r(-1.9,1.9),this.r(.55,.85),true,GROUND+.24);
-      for (let i = 0; i < 5; i++) {
-        const px = x + this.detail(-1.05, 1.05), pz = -56 + this.detail(-1.65, 1.65);
-        b.put(this.clumpGeo, i % 2 ? m.stone : m.mortar, px, GROUND + .31, pz, this.detail(.15, .26), this.detail(.10, .20), this.detail(.14, .27), this.detail(0, 1), this.detail(0, 6));
-        this.leafClump(px + .17, pz - .08, .7, GROUND + .28, i);
-      }
-      for(let j=0;j<8;j++)b.put(this.pavingGeos[j%3]!,m.paving[j%5]!,x-1.45+(j%2)*2.9,GROUND+.28,-57.9+Math.floor(j/2)*1.10,.22,.22,.85,0,this.r(-.1,.1));
-    }
-    this.tree(-58,-58,.78,true);this.bamboo(-46,-59,.75);
-    this.tree(53,-57,.9,false,true);this.tree(-66,-66,.8,false,true);this.tree(48,9,1.1,false,true);
-    b.transform(-55.5,GROUND,-53.4,0,()=>{
-      this.waterJar(0, 0, 1.7);
-    });
-    // Small street objects, awnings and outdoor seating carry the life of the reference.
-    b.transform(-57,GROUND,-26,Math.PI/2,()=>{
-      b.box(0,2.65,1.1,4.7,.07,2.4,m.cream,false,.0);
-      for(const x of [-2.15,2.15])b.box(x,1.4,2.1,.065,2.8,.065,m.wood);
-      this.table(-1,0,1.3,1.5,.8);this.bench(-1,2.15);this.pot(1.5,2.1,.8);
-      b.box(2.1,.64,1.3,.65,1.28,.1,m.darkWood);this.sign('新 茶',2.1,.7,1.365,.5,.7);
-    });
-    for(const [x,z]of [[-35,-18],[-25,-13],[-46,-27],[-48,1],[-42,27],[33,-18],[31,27],[-19,39]])b.transform(x!,GROUND,z!,0,()=>{this.pot(0,0,1);this.pot(.75,.25,.65);});
-    for(const [x,z]of [[-28,-10],[39,5],[-19,48]])b.transform(x!,GROUND,z!,0,()=>{this.bench(0,0);this.pot(1.25,0,.75);});
-    // A narrow covered veranda beside the courtyard's eastern wing.
-    b.transform(-43,GROUND,-55,Math.PI/2,()=>{
-      for(const x of [-5,-2,1,4])b.box(x,1.6,0,.15,3.2,.15,m.wood,true);
-      this.roof(11.4,2.1,3.1,.35);
-    });
-    b.transform(-29, GROUND, -17, 0, () => { this.bench(0, 0, -.2); this.bench(7, -5, .5); });
-    b.transform(-54.8, GROUND, -20, 0, () => { this.table(0, 0, 0); this.bench(0, .9); this.pot(1.7, 0, .9); });
-    // Garden foreground, bamboo groves and naturally dense town edges.
-    for (let i = 0; i < 36; i++) {
-      const x = this.r(45, 74), z = this.r(-73, 25);
-      if (Math.hypot(x - 49, z + 54) < 7 || Math.hypot(x - 44, z + 4) < 8) continue;
-      this.bamboo(x, z, this.r(.8, 1.2));
-    }
-    for (let i = 0; i < 25; i++) {
-      const side = i % 2 ? -1 : 1, x = side * this.r(76, 91), z = this.r(-86, 86);
-      this.tree(x, z, this.r(1, 1.6));
-    }
-    for (let i = 0; i < 170; i++) {
-      const z = this.r(-83, 84), side = i % 2 ? -1 : 1;
-      if (Math.abs(z + 38) < 5 || Math.abs(z - 44) < 5) continue;
-      const x = riverX(z) + side * this.r(10.2, 14.5);
-      this.bush(x, z, this.r(.35, .9), i % 4 === 0);
-    }
-    for (let i = 0; i < 50; i++) this.bush(this.r(-84, -71), this.r(-75, 78), this.r(.8, 1.4), i % 3 === 0);
-    for (let i = 0; i < 15; i++) this.bush(-65 + this.r(-4, 4), 48 + this.r(-4, 4), .7, true);
-    this.tree(-71, 51, 1.25); this.path([-65, 48], [-69, 50], 2.5);
-    for(const [x,z]of [[-8,-68],[-25,-48],[-37,-33],[-7,3],[34,-49],[48,-29],[32,19],[-40,49],[-61,77],[-7,74],[63,17],[67,-62]])this.tree(x!,z!,this.r(1.0,1.5),this.random()>.6);
-    const pathSegments: [[number,number],[number,number]][]=[];
-    for(const ids of PATHS)for(let i=1;i<ids.length;i++)pathSegments.push([WAYPOINTS[ids[i-1]!]!,WAYPOINTS[ids[i]!]!]);
-    const distToPath=(x:number,z:number)=>Math.min(...pathSegments.map(([a,c])=>{const dx=c[0]-a[0],dz=c[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}));
-    const pavingPoint = new T.Vector3();
-    const isPaved = (x:number,z:number) => this.pavingAreas.some(area=>{
-      pavingPoint.set(x,0,z).applyMatrix4(area.inverse);
-      return Math.abs(pavingPoint.x)<area.w/2+.25&&Math.abs(pavingPoint.z)<area.d/2+.25;
-    });
-    for(let i=0;i<23000;i++){
-      const x=this.r(-86,85),z=this.r(-85,85),dist=distToPath(x,z);
-      if(Math.abs(x-riverX(z))<9.6 || (x>-69&&x<-35&&z>-72&&z<-40) || dist<2.6 || isPaved(x,z))continue;
-      if(dist>9&&this.random()>.45)continue;
-      b.put(this.grassGeo,m.leaf[i%3]!,x,GROUND+.025,z,this.r(.75,1.35),this.r(.65,1.05),this.r(.75,1.35),0,this.r(0,6),0,false);
-      if(i%160===0)this.bush(x,z,this.r(.35,.7),i%320===0);
-    }
-    for(const [a,c]of pathSegments){
-      const dx=c[0]-a[0],dz=c[1]-a[1],len=Math.hypot(dx,dz),nx=-dz/len,nz=dx/len;
-      for(let t=0;t<len;t+=3.5)for(const side of [-1,1]){
-        const x=a[0]+dx*t/len+nx*side*3.6,z=a[1]+dz*t/len+nz*side*3.6;
-        if(Math.abs(x-riverX(z))<10 || (x>-69&&x<-35&&z>-72&&z<-40))continue;
-        const size = this.r(.35, .65);
-        if (isPaved(x, z)) {
-          // Preserve the original layout RNG even when a decorative clump is omitted.
-          for (let i = 0; i < 7; i++) this.random();
-          continue;
-        }
-        this.bush(x,z,size,true);
-      }
-    }
-    for (const [x, z] of [[-44, -34], [-33, -22], [-16, -34], [30, -35], [33, 13], [29, 39], [-15, 44], [-47, 20]]) {
-      b.transform(x!, GROUND, z!, 0, () => {
-        b.box(0, .1, 0, .55, .2, .55, m.stone);
-        b.box(0, .95, 0, .11, 1.8, .11, m.wood);
-        b.box(0, 1.8, 0, .43, .5, .43, m.warm);
-        for (const s of [-1, 1]) { b.box(s * .22, 1.8, .22, .04, .54, .04, m.darkWood); b.box(s * .22, 1.8, -.22, .04, .54, .04, m.darkWood); }
-        b.put(b.coneGeo, m.roof[0]!, 0, 2.18, 0, .4, .26, .4, 0, Math.PI / 4);
+    this.bamboo(-19,-17.7,.72);this.bamboo(-6.7,-18,.65);this.tree(-19,-9.6,.62,false,true);
+    b.transform(-16.9,GROUND,-12.9,0,()=>this.waterJar(0,0,1.55));
+    this.doorstep(-13,-17.4);this.doorstep(-18,-.05,Math.PI);this.doorstep(18.7,5,-Math.PI/2);
+    // Window-adjacent street dressing repeats at a human scale across both banks.
+    for(const [x,z]of [[-23,-4.8],[-16,-5.2],[-8,-5.2],[.6,-6.5],[2,4],[2,13],[14,-9],[14,11],[17.2,-22],[25,12],[-23,22],[-12,22]])
+      b.transform(x!,GROUND,z!,0,()=>{this.pot(0,0,.95);this.pot(.65,.12,.60,false);});
+    this.bicycle(-10.3,-5.5,.1);this.bicycle(17.5,-10.2,-Math.PI/2);this.bicycle(-23,8,Math.PI/2);
+    // Tea stall, book stall and bamboo awnings add near/middle distance layers.
+    for(const [x,z,yaw,label]of [[-14,4,Math.PI/2,'今夜新茶'],[17.1,7,-Math.PI/2,'雨中读书']] as const){
+      b.transform(x,GROUND,z,yaw,()=>{
+        b.box(0,2.58,0,3.4,.07,1.65,m.cream);for(const s of [-1,1])b.box(s*1.55,1.25,.6,.055,2.5,.055,m.wood);
+        for(let j=0;j<12;j++)b.box(-1.6+j*.28,2.5,.8,.13,.20,.05,j%2?m.woodLight:m.cream);
+        this.table(0,0,.2,2.3,.8);for(let j=0;j<4;j++){b.cyl(-.8+j*.48,.9,.2,.10,.18,m.ceramic);b.cyl(-.8+j*.48,1.01,.2,.11,.035,m.gold);}
+        this.sign(label,0,1.8,-.5,1.6,.4,true);this.lantern(1.3,2.15,.4,.65);
       });
     }
-    for(const [x,z,yaw,text]of [[-46,-22,Math.PI,'望溪桥 →'],[-18,-25,-.6,'竹里 →'],[32,4,.8,'归云桥 →'],[-29,43,Math.PI,'听雨小院 →']]as const){
-      b.transform(x,GROUND,z,yaw,()=>{b.box(0,.9,0,.1,1.8,.1,m.wood);b.box(0,1.65,0,1.6,.42,.1,m.woodLight);this.sign(text,0,1.65,.065,1.5,.35);});
+    // Old mailbox, noticeboard, air-conditioning units and woven waste baskets.
+    for(const [x,z,yaw]of [[-24,-4.9,0],[17.8,0,-Math.PI/2],[-12.6,13,Math.PI/2]])b.transform(x!,GROUND,z!,yaw!,()=>{
+      b.box(0,.8,0,.54,1.1,.38,m.red);b.box(0,1.22,.21,.35,.045,.02,m.black);b.box(0,.16,0,.12,.32,.12,m.roofEdge);this.sign('邮',0,.82,.205,.3,.3);
+      b.box(1.2,1.55,-.18,1.2,1.4,.10,m.wood);b.box(1.2,1.55,-.12,1.05,1.24,.02,m.cream);this.sign('街坊公告',1.2,1.95,-.09,1.0,.23);this.sign('福',1.4,1.47,-.08,.32,.4);b.box(1.2,2.3,-.05,1.42,.08,.5,m.roofEdge);
+      b.put(this.potGeo,m.woodLight,.6,0,.4,.7,.9,.7);for(let i=0;i<16;i++){const a=i*Math.PI/8;b.beam([.6+Math.sin(a)*.19,.1,.4+Math.cos(a)*.19],[.6+Math.sin(a)*.2,.57,.4+Math.cos(a)*.2],.009,m.gold);}
+    });
+    for(const [x,z,yaw]of [[-21.5,7,0],[25,-13,Math.PI/2]])b.transform(x!,GROUND+2.3,z!,yaw!,()=>{
+      b.box(0,0,0,1.05,.65,.35,m.stone);b.put(this.ringGeo,m.black,.2,0,.2,.22,.22,.4);for(let j=0;j<6;j++)b.box(-.35+j*.05,0,.19,.015,.43,.02,m.black);
+    });
+    // Drainage, gutters and cables bind the whole block into the same rainy neighbourhood.
+    for(const x of [-24.5,3.5,12.5]){
+      b.box(x,GROUND+.052,0,.18,.018,54,m.black);
+      for(let z=-26;z<27;z+=.32)b.box(x,GROUND+.065,z,.19,.016,.036,m.roofEdge);
     }
+    for(const [x,z,yaw]of [[-10,-4.8,0],[1,-.6,Math.PI],[14.5,-16,Math.PI],[14.2,14.4,0],[-12,19,0],[-24,18,0]])this.streetLamp(x!,z!,yaw!);
+    for(const [x,z]of [[-23.8,-4.8],[16.5,-22],[15.5,13]]){
+      b.cyl(x!,GROUND+2.9,z!,.10,5.8,m.stone);b.box(x!,GROUND+5.2,z!,1.3,.10,.15,m.darkWood);
+      for(const d of [-.45,0,.45]){b.cyl(x!+d,GROUND+5.4,z!,.07,.22,m.cream);b.cyl(x!+d,GROUND+5.38,z!,.09,.04,m.roofEdge);}
+    }
+    const cable=(a:T.Vector3,c:T.Vector3)=>{let last=a.clone();for(let j=1;j<=28;j++){const t=j/28,p=a.clone().lerp(c,t);p.y-=Math.sin(t*Math.PI)*.7;b.beam(last.toArray(),p.toArray(),.015,m.black);last=p;}};
+    for(const offset of [-.22,.22]){cable(new T.Vector3(-23.8+offset,GROUND+5.5,-4.8),new T.Vector3(16.5+offset,GROUND+5.5,-22));cable(new T.Vector3(16.5+offset,GROUND+5.5,-22),new T.Vector3(15.5+offset,GROUND+5.5,13));}
+    // Small planting pockets replace the previous empty meadows.
+    this.tree(1.5,11,.65,true);this.tree(15,-24.5,.6,true);this.bamboo(25.5,14,.8);this.bamboo(25.5,-7,.8);this.bamboo(-24,23,.65);
+    for(const [x,z]of [[1.5,10],[1.7,14],[13,-24],[25,12],[-23,23],[-6.5,20]])for(let i=0;i<5;i++)this.bush(x!+this.r(-.6,.6),z!+this.r(-.5,.5),this.r(.35,.65),i%2===0);
     this.finishPaving();
-    // Local foreground beds tie bridge masonry and waterside trees into the landscape.
-    // Clearance includes each clump's reach, not only its centre, and leaves both bridge mouths open.
-    const canPlantShore = (x: number, z: number, radius: number) => {
-      if (Math.abs(x - riverX(z)) < 9.9 + radius || distToPath(x, z) < 2.65 + radius) return false;
-      if ((x > -7 - radius && x < 29 + radius) && (Math.abs(z + 38) < 3.0 + radius || Math.abs(z - 44) < 2.7 + radius)) return false;
-      return !this.pavingAreas.some(area => {
-        pavingPoint.set(x, 0, z).applyMatrix4(area.inverse);
-        return Math.abs(pavingPoint.x) < area.w / 2 + radius + .18 && Math.abs(pavingPoint.z) < area.d / 2 + radius + .18;
-      });
-    };
-    for (const [x, z, rx, rz] of [
-      [-1.5, -30.7, 2.3, 3.5], [-1.0, -45.7, 2.5, 2.6],
-      [23.1, -29.0, 2.0, 3.4], [23.1, -45.7, 2.3, 2.6],
-      [-10, -23, 3.0, 2.4], [27, -23, 2.5, 2.6],
-      [-12, 24, 2.8, 2.4], [26, 20, 2.4, 2.8],
-    ]) this.shoreMeadow(x!, z!, rx!, rz!, canPlantShore);
   }
 }

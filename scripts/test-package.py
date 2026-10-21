@@ -59,6 +59,15 @@ def main():
                 assert response.headers.get('Content-Encoding') == 'gzip'
                 compressed = response.read()
             assert gzip.decompress(compressed) == (extracted / 'dist/game' / script.removeprefix('./')).read_bytes()
+            # A running server must serve refreshed HTML after a production rebuild.
+            index = extracted / 'dist/game/index.html'
+            original = index.read_bytes()
+            marker = b'<!-- rebuild-cache-check -->'
+            index.write_bytes(original + marker)
+            refreshed = urllib.request.Request(base, headers={'Accept-Encoding': 'gzip'})
+            with urllib.request.urlopen(refreshed, timeout=10) as response:
+                assert gzip.decompress(response.read()).endswith(marker), 'Stale compressed HTML after rebuild'
+            index.write_bytes(original)
         finally:
             server.terminate()
             server.communicate(timeout=10)
@@ -66,6 +75,7 @@ def main():
         'date': datetime.now(timezone.utc).isoformat(), 'passed': True, 'files': len(names),
         'archiveBytes': archive_path.stat().st_size, 'sha256': sha256(archive_path.read_bytes()).hexdigest(),
         'allFilesByteIdentical': True, 'extractedServerWorks': True, 'gzipBundleBytes': len(compressed),
+        'gzipCacheTracksFileChanges': True,
     }
     (output / 'package-smoke.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     (ROOT / 'release/SHA256SUMS').write_text(report['sha256'] + '  ' + archive_path.name + '\n', encoding='utf-8')

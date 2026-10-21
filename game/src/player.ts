@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { Character } from './character';
-import { SPAWN } from './config';
+import { SPAWN, WORLD_HALF } from './config';
 import { Physics, RAPIER } from './physics';
 
 export class Player {
@@ -42,7 +42,7 @@ export class Player {
       this.avatar.root.rotation.y += diff * (1 - Math.exp(-14 * dt));
     }
     if(this.velocity.lengthSq()<.001)this.speed=0;
-    if (p.y < -5 || Math.abs(p.x) > 93 || Math.abs(p.z) > 93) this.reset();
+    if (p.y < -5 || Math.abs(p.x) > WORLD_HALF+1 || Math.abs(p.z) > WORLD_HALF+1) this.reset();
   }
   sync() {
     const p = this.body.translation(); this.position.set(p.x, p.y - .825, p.z);
