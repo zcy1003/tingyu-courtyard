@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "recordedOn": "2026-10-20",
+  "timeZone": "Asia/Shanghai",
+  "source": "用户提供的生成式原型图；保持原文件",
+  "images": [
+    {
+      "id": "image_1",
+      "path": "yuanxingtu/image_1.png",
+      "role": "gameplay",
+      "description": "主画面、光照、材质与镜头",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2915053,
+      "sha256": "0e2db1be1fe544875a1c1b4b42df491aa8b15dad5e8c8f1e37fd904792ab172d"
+    },
+    {
+      "id": "image_2",
+      "path": "yuanxingtu/image_2.png",
+      "role": "world-layout",
+      "description": "小镇拓扑、河道与桥梁",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 3748183,
+      "sha256": "8ace945a7d97dbafbc3b902198dca35f4fa7b8bff37ca213f2c3190c25802b56"
+    },
+    {
+      "id": "image_3",
+      "path": "yuanxingtu/image_3.png",
+      "role": "courtyard",
+      "description": "起点小院、茶室与近景细节",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2976477,
+      "sha256": "c5a477235a2a15e9f499d09a6ba31749f342492214786dfebe24b01a04678640"
+    },
+    {
+      "id": "image_4",
+      "path": "yuanxingtu/image_4.png",
+      "role": "environment-kit",
+      "description": "建筑、植物与道具组件",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 2338033,
+      "sha256": "cf4149bf4caacc03930181370506f834c10298102dbed7e7998c34829dbbf5f5"
+    },
+    {
+      "id": "image_5",
+      "path": "yuanxingtu/image_5.png",
+      "role": "player",
+      "description": "玩家角色三视图与装束",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1589544,
+      "sha256": "68b6a96ba52c568079c671b2cb16a7a065ea3b38e3b98484da88d01bde8d0487"
+    }
+  ],
+  "legacyBaseline": {
+    "gitCommit": "a868deaacd98e3b358edfc2786e51b381a09803f",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "2e6e1e82b0a94f0a87027ecf713f5bebadca7f68a72af5fdad646caa751cda3b"
+      },
+      {
+        "path": "src/courtyard.js",
+        "sha256": "198c51839bfb8caa075d99668c8f7683f6261a24fd2af915742b336e73a93ff9"
+      },
+      {
+        "path": "src/courtyard-detail.js",
+        "sha256": "6b5b049ace7f27160683a99a75f7cfadb2944b19bb020e14974e3cef979a8f13"
+      },
+      {
+        "path": "src/template.html",
+        "sha256": "810160956d60584d34af36df9de137b35069a9ff244caef6771c613803f03851"
+      },
+      {
+        "path": "scripts/build.py",
+        "sha256": "0480db93756c0bdf7afb98b987b6c129c169f9456baccb945b751f29c6b5354a"
+      },
+      {
+        "path": "scripts/serve.py",
+        "sha256": "77eda576d4585f899a20dfd5d0686a1b3c58e703d9d00e3437a0fd9bb3842be7"
+      },
+      {
+        "path": "vendor/three/three.min.js",
+        "sha256": "170c6789f43217c96b3170f4b42fafe135de7f7cd48497a4218f9757ee1d49fa"
+      },
+      {
+        "path": "vendor/three/Reflector.js",
+        "sha256": "012ecf98f5fc9bd262871e33d79392a25c04c2573ed68852eb3b8d2d39f9808b"
+      }
+    ]
+  }
+}

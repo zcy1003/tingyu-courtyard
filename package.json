@@ -1,0 +1,39 @@
+{
+  "name": "tingyu-town",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "听雨小镇：春日雨后的第三人称江南小镇漫游游戏。",
+  "engines": {
+    "node": "^24.0.0"
+  },
+  "packageManager": "npm@11.16.0",
+  "scripts": {
+    "dev": "vite --config vite.config.ts",
+    "typecheck": "tsc --noEmit",
+    "check:legacy": "python scripts/build.py --check",
+    "check:preparation": "node scripts/check-preparation.mjs",
+    "check": "npm run check:legacy && npm run typecheck && npm run check:preparation",
+    "build": "npm run typecheck && vite build --config vite.config.ts",
+    "preview": "vite preview --config vite.config.ts",
+    "test": "node scripts/test-game.mjs",
+    "test:production": "node scripts/test-production.mjs",
+    "test:art": "node scripts/capture-art-review.mjs",
+    "test:stability": "node scripts/test-stability.mjs 600",
+    "test:package": "python scripts/test-package.py",
+    "play": "python scripts/play.py",
+    "package": "npm run build && python scripts/package-game.py",
+    "verify": "npm run check && npm run build"
+  },
+  "dependencies": {
+    "@dimforge/rapier3d-compat": "0.21.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/three": "0.186.0",
+    "playwright-core": "1.64.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.4"
+  }
+}

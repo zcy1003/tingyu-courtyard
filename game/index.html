@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e9eddf" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%233e6254'/%3E%3Ctext x='32' y='44' fill='%23f7f0d8' font-size='38' text-anchor='middle' font-family='serif'%3E雨%3C/text%3E%3C/svg%3E" />
+    <meta name="description" content="走进一座春日雨后的江南小镇。青石巷、竹影、石桥与一间等你回来的茶室。" />
+    <title>听雨小镇 · 一场不赶时间的漫游</title>
+  </head>
+  <body>
+    <main id="world" aria-label="听雨小镇三维漫游场景"></main>
+    <div class="grain" aria-hidden="true"></div>
+    <section id="intro" class="intro">
+      <div class="intro-brand"><span class="brand-seal">听<br>雨</span><span>一方小院 · 两岸春风</span></div>
+      <div class="intro-copy"><p class="eyebrow">A QUIET LITTLE TOWN</p><h1>听雨小镇<span>沿着水岸，慢慢走。</span></h1>
+        <p class="intro-description">雨刚停，青石路还带着一点湿意。<br>穿过月洞门，去看看桥那头的春天。</p>
+        <button id="start" class="start-button" disabled><span id="load-label">正在铺好青石路…</span><span aria-hidden="true">↗</span></button>
+        <div class="load-track"><i id="load-progress"></i></div><p class="intro-controls">WASD 行走 <span>·</span> 拖动鼠标看四周 <span>·</span> 电脑浏览器体验</p>
+      </div><div class="intro-footer"><span>春日 · 雨后清晨</span><span>没有目的地，也可以出发</span></div>
+    </section>
+    <div id="hud" class="hud" hidden>
+      <div class="place-card"><span class="small-seal">听雨</span><div><p class="eyebrow">JIANGNAN · AFTER THE RAIN</p><h2 id="place-name">听雨小院</h2><p id="place-note">竹影入窗，茶香正好</p></div></div>
+      <div class="compass" aria-label="当前朝向"><span>·</span><b id="heading">北</b><span>·</span></div>
+      <nav class="top-actions" aria-label="游戏菜单"><button id="audio" class="icon-button" aria-label="开启环境声音" aria-pressed="false">声<span class="off-dot"></span></button><button id="help" class="icon-button" aria-label="打开暂停和帮助">☰</button></nav>
+      <div class="bottom-hint" id="hints"><kbd>W A S D</kbd> 行走 <i>·</i> 鼠标拖动 观景 <i>·</i> <kbd>M</kbd> 地图 <i>·</i> <kbd>P</kbd> 拍照</div>
+      <button id="mini-map-button" class="mini-map-button" aria-label="打开小镇地图"><canvas id="mini-map" width="280" height="280"></canvas><span>漫游地图 <kbd>M</kbd></span></button>
+      <div id="arrival" class="arrival" aria-live="polite"><span>走到了</span><strong></strong><p></p></div>
+    </div>
+    <section id="pause-panel" class="modal" hidden aria-labelledby="pause-title"><div class="modal-card"><p class="eyebrow">TAKE YOUR TIME</p><h2 id="pause-title">歇一会儿</h2><p class="modal-intro">春天会在这里等你。</p>
+      <div class="control-list"><div><kbd>W A S D / 方向键</kbd><span>漫步</span></div><div><kbd>Shift</kbd><span>轻跑</span></div><div><kbd>鼠标拖动 / 滚轮</kbd><span>看四周 / 调整远近</span></div><div><kbd>M / P</kbd><span>地图 / 拍照模式</span></div><div><kbd>R / Esc</kbd><span>回到小院 / 暂停</span></div></div>
+      <label class="quality-label">画面质量<select id="quality"><option value="low">轻盈</option><option value="standard" selected>均衡</option><option value="high">细致</option></select></label>
+      <button id="resume" class="primary-button">继续漫游 <span>↗</span></button><button id="reset" class="text-button">回到听雨小院</button></div>
+    </section>
+    <section id="map-panel" class="modal" hidden aria-labelledby="map-title"><div class="map-card"><button id="close-map" class="close-button" aria-label="关闭地图">×</button><p class="eyebrow">A WALK ALONG THE WATER</p><h2 id="map-title">一座可以慢慢逛的小镇</h2><canvas id="large-map" width="720" height="720"></canvas><div class="map-footer"><span id="visited">已到访 1 / 7 处风景</span><span>白色箭头是你 <kbd>M</kbd> 收起地图</span></div></div></section>
+    <div id="photo-ui" class="photo-ui" hidden><div><p class="eyebrow">A MOMENT IN TINGYU</p><h2>把这一刻留下</h2><p>拖动鼠标取景，滚轮调整远近</p></div><div><button id="save-photo" class="primary-button">保存照片</button><button id="exit-photo" class="light-button">返回漫游 <kbd>P</kbd></button></div></div>
+    <div id="fade" class="fade" aria-hidden="true"></div><div id="toast" class="toast" role="status"></div>
+    <section id="fatal" class="modal" hidden><div class="modal-card"><h2>小镇暂时没有打开</h2><p id="fatal-message"></p><button class="primary-button" onclick="location.reload()">重新打开</button></div></section>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

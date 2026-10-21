@@ -1,79 +1,78 @@
-# 听雨小院
+# 听雨小镇
 
-基于 Three.js 的雨夜中式庭院微缩景观。完整方形底座、月洞院门、青砖瓦顶、木格玻璃窗与茶室陈设，搭配暖红灯笼、动态雨丝、涟漪和地面倒影。画面不含操作面板。
+一款可以在电脑浏览器中游玩的第三人称江南小镇漫游游戏，版本 **0.1.0**。以原版听雨小院为起点，按 `yuanxingtu/` 中的五张原型扩展为春日雨后的两岸小镇。
 
-![场景预览](assets/preview.png)
+2026-10-21 画面更新：细化人物衣褶与配件、青瓦飞檐、湿润青石、花草与陶器，完善天空、远山、接触阴影和水面倒影。详见 [本轮优化记录](docs/art-refinement-2026-10-21.md)。
 
-## 打开与操作
+![听雨小镇实机画面](assets/game-courtyard.png)
 
-桌面浏览器可直接打开根目录 `index.html`，无需安装 Blender、Node.js 或联网下载依赖。
+## 开始游玩
 
-- 鼠标左键拖拽 / 手机单指拖拽：旋转。
-- 鼠标滚轮 / 手机双指捏合：缩放。
-- 鼠标右键拖拽：平移。
-- 双击：恢复初始视角。
-
-iPhone 建议通过 Safari 访问已部署的网页；“文件”App 的本地 HTML 预览不能保证运行 WebGL 和 JavaScript。较旧手机的流畅度可能受实时反射、阴影和像素密度影响。
-
-## 项目结构
-
-```text
-index.html                 可直接运行、可部署的单文件页面（构建产物，已提交）
-src/
-  courtyard.js             场景基础、建筑和室内
-  courtyard-detail.js      院门、植物、陈设、雨景、反射与交互
-  template.html            页面模板
-vendor/three/
-  three.min.js             固定版本的 Three.js 0.160.1 / r160
-  Reflector.js             上游平面反射实现
-  LICENSE                  Three.js MIT 许可证
-scripts/
-  build.py                 构建；仅使用 Python 标准库
-  serve.py                 本地预览服务器
-assets/preview.png         场景预览图
-archive/                   原始制作文件与检查截图
-THIRD_PARTY_NOTICES.md     第三方来源与修改说明
-```
-
-`courtyard.js` 与 `courtyard-detail.js` 按顺序合并成一个作用域，两者不是独立 ES 模块。模型、材质、纹理和动画均在代码内生成，无额外模型或贴图文件。`index.html` 内嵌所有运行代码，不依赖 CDN。
-
-## 修改与构建
-
-仅重新构建时需要 Python 3（无需 pip 安装任何包）：
+**双击根目录的 `启动听雨小镇.cmd`。** 启动器会提供本地网页并打开浏览器。游玩期间保留启动窗口，结束时关闭窗口或按 Ctrl+C。
 
 ```powershell
-python scripts/build.py
-python scripts/build.py --check
+python scripts/play.py
 ```
 
-若 Windows 使用 Python Launcher，也可将 `python` 换成 `py -3`。
+入口为 `http://127.0.0.1:8001/`。本机已具备 Python 3 与 Chrome/Edge；运行已构建的版本不需要安装 Node、游戏编辑器或联网下载资源。
 
-从任何工作目录运行构建脚本都可以，脚本使用自身路径寻找项目文件。请修改 `src/`，再构建生成 `index.html`。构建时对上游 Reflector 的导入、导出和湿路面混合方式进行适配，原始依赖文件保留不变。
+完整说明见 [README-游玩说明.md](README-游玩说明.md)。可分发压缩包位于 `release/tingyu-town-v0.1.0.zip`，解压后也可双击其中的启动器。
 
-## 本地预览
+## 玩法
+
+| 操作 | 功能 |
+| --- | --- |
+| WASD / 方向键 | 行走 |
+| Shift | 按住轻跑 |
+| 鼠标拖动 / 滚轮 | 观察四周 / 缩放镜头 |
+| M | 小镇地图与到访记录 |
+| P | 拍照模式和 PNG 保存 |
+| Esc | 暂停、帮助、三档画质 |
+| R | 回到听雨小院 |
+| 右上角“声” | 开关合成环境声 |
+
+从小院出发，经青石巷、榕荫小集和望溪石桥进入东岸竹里，再通过归云木桥与柳岸返回。环线和两条观景支路都可双向行走。小院茶室与两间茶铺可进入，其他民居以室外观赏为主。
+
+当前版本包含 17 栋建筑、两座桥、两处亭、程序化旅人及步行动画、碰撞与镜头避障、水纹/反射、风动植被、落花、七处到访地点、地图、拍照和暂停系统。首版面向电脑键鼠，暂未包含手机摇杆、NPC 任务、战斗或存档。程序化模型保留原型的元素与配色，细节比概念图简化。
+
+## 开发与验证
+
+本机使用 Node.js 24.18.0、npm 11.16.0、Python 3.13.14。依赖版本由 `package-lock.json` 锁定。
 
 ```powershell
-python scripts/serve.py
+npm.cmd ci --ignore-scripts
+npm.cmd run dev
+npm.cmd run verify
+npm.cmd test
 ```
 
-浏览器访问 `http://127.0.0.1:8000/`。按 Ctrl+C 停止。服务器只提供页面和预览图，不列出源码或历史文件。
+开发入口：`http://127.0.0.1:5173/`。生产输出：`dist/game/`。
 
-需要同一局域网内访问时，可以指定 `--host 0.0.0.0`；这只用于本地预览，与部署到互联网是两回事。
+`verify` 检查原版构建、原型及历史文件校验值、库加载、TypeScript 类型与生产构建。`test` 使用本机 Chromium 浏览器执行真实键鼠、完整路线、碰撞、镜头和功能检查。
 
-## 提交 Git 与部署
+已启动本地游玩服务器后，可运行 `npm.cmd run test:production` 检查 Chrome/Edge 生产版本。`npm.cmd run test:stability` 执行 10 分钟运行稳定性测试。原始报告与截图生成到被 Git 忽略的 `test-results/`。
 
-当前页面已命名为 `index.html`，可将项目作为静态站点部署。托管方若要求构建命令，使用 `python scripts/build.py`；若直接发布已有静态文件，则无须构建。入口为根目录 `index.html`。
+`npm.cmd run test:art` 生成七组固定机位与画质/窗口回归截图，检查天空亮度和浏览器运行错误。它与稳定性测试共用端口 5176，需依次执行。
 
-进入本地 Git 仓库后，可检查并提交：
+运行 `npm.cmd run package` 生成游玩包后，`npm.cmd run test:package` 检查 ZIP 文件与工作区逐字节一致、解压后的服务器与 JS gzip，并更新 `release/SHA256SUMS`。
 
 ```powershell
-git status
-git add .
-git commit -m "Initial Tingyu courtyard scene"
+npm.cmd run build
+python scripts/package-game.py
 ```
 
-随后为自己的仓库配置 remote 并推送。项目不包含远程仓库地址、账户或凭据。第三方代码的许可证位于 `vendor/three/LICENSE`；项目没有替作者额外指定原创部分的开源许可证。
+构建中较大的 JavaScript 包主要来自 Rapier 内嵌的 WebAssembly；本地游玩服务器对页面、JS 和 CSS 提供 gzip。部署互联网时，只需发布 `dist/game/` 的静态内容并开启托管方的压缩。
 
-## 历史文件
+## 代码和文档
 
-`archive/original-work/` 和 `archive/original-outputs/` 保留本次整理时的全部原始工作文件、旧版失败稿、渲染检查截图与旧构建脚本，便于追溯。它们不参与当前构建。旧脚本中可能保留原工作区路径；当前 `src/` 与 `scripts/` 不依赖原工作区。旧手机二维码只对应当时电脑的局域网入口，不可用作部署地址。
+- `game/src/`：新游戏运行时代码；渲染、世界、构件、材质、物理、角色、相机、音频与界面。
+- `scripts/play.py`：生产构建本地服务器；`scripts/package-game.py`：独立游玩包。
+- [开发准备](docs/preproduction/README.md)：原型解读、地图、资产、技术计划和环境记录。
+- [交付与验证](docs/delivery-v0.1.0.md)：实际完成范围、测试证据和限制。
+- `licenses/` 与 [第三方说明](THIRD_PARTY_NOTICES.md)：新游戏运行库许可证。
+
+## 原版雨夜小院
+
+根目录 `index.html`、`src/`、`vendor/` 与 Python 构建流程保持为原版微缩景观。它仍可直接离线打开；`python scripts/serve.py` 在端口 8000 提供旧版预览。新游戏与旧版分别使用 Three.js r186 / r160，不在同一页面混载。
+
+原版说明保存在 [legacy-courtyard.md](docs/legacy-courtyard.md)，原始制作资料位于 `archive/`。

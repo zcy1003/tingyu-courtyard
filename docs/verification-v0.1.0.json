@@ -1,0 +1,969 @@
+{
+  "version": "0.1.0",
+  "verifiedOn": "2026-10-21",
+  "timeZone": "Asia/Shanghai",
+  "functional": {
+    "date": "2026-10-21T02:24:24.050Z",
+    "browser": "155.0.8059.80",
+    "viewport": {
+      "width": 1440,
+      "height": 900,
+      "pixelRatio": 1
+    },
+    "checks": [
+      "Start enters the game",
+      "Real keyboard moves the player",
+      "Mouse drag rotates the camera",
+      "Blur pauses and clears movement",
+      "No stuck keys after blur",
+      "Map opens",
+      "Photo mode hides HUD",
+      "Photo download succeeds",
+      "Reset returns to the courtyard",
+      "Both directions of the full loop and both branches are walkable",
+      "House wall blocks the player",
+      "River bank blocks falling into water",
+      "Bridge railing is solid",
+      "World edge is contained",
+      "Tea room steps can be climbed",
+      "Tea table blocks the player",
+      "Camera avoids the front wall",
+      "Diagonal walking has normalized speed",
+      "No browser runtime or shader errors"
+    ],
+    "routes": [
+      {
+        "target": [
+          -52,
+          -40
+        ],
+        "position": [
+          -52.00105285644531,
+          1.2753360748291016,
+          -40.25098419189453
+        ],
+        "error": 0.25098640020456353
+      },
+      {
+        "target": [
+          -50,
+          -20
+        ],
+        "position": [
+          -50.07803726196289,
+          1.1988816738128663,
+          -20.171663284301758
+        ],
+        "error": 0.1885685483635353
+      },
+      {
+        "target": [
+          -24,
+          -19
+        ],
+        "position": [
+          -24.29414176940918,
+          1.1818647861480713,
+          -19.00926971435547
+        ],
+        "error": 0.2942877981082379
+      },
+      {
+        "target": [
+          -3,
+          -38
+        ],
+        "position": [
+          -3.1614444255828857,
+          1.2217352867126465,
+          -37.87098693847656
+        ],
+        "error": 0.20666076694776445
+      },
+      {
+        "target": [
+          11,
+          -38
+        ],
+        "position": [
+          10.746938705444336,
+          3.3651493072509764,
+          -37.999542236328125
+        ],
+        "error": 0.25306170858066984
+      },
+      {
+        "target": [
+          25,
+          -38
+        ],
+        "position": [
+          24.82666015625,
+          1.3167953968048096,
+          -38.00004959106445
+        ],
+        "error": 0.17333985084379208
+      },
+      {
+        "target": [
+          37,
+          -4
+        ],
+        "position": [
+          36.90081024169922,
+          1.2186067581176758,
+          -4.285989284515381
+        ],
+        "error": 0.30270196399988364
+      },
+      {
+        "target": [
+          27,
+          44
+        ],
+        "position": [
+          27.160017013549805,
+          1.2214091300964356,
+          43.810882568359375
+        ],
+        "error": 0.24773140207843022
+      },
+      {
+        "target": [
+          11,
+          44
+        ],
+        "position": [
+          11.215105056762695,
+          1.7175889492034913,
+          43.99925231933594
+        ],
+        "error": 0.21510635618516202
+      },
+      {
+        "target": [
+          -5,
+          44
+        ],
+        "position": [
+          -4.831075191497803,
+          1.275740671157837,
+          44.00003433227539
+        ],
+        "error": 0.16892481199104278
+      },
+      {
+        "target": [
+          -22,
+          44
+        ],
+        "position": [
+          -21.806304931640625,
+          1.2172570705413819,
+          44.008846282958984
+        ],
+        "error": 0.19389697323303778
+      },
+      {
+        "target": [
+          -48,
+          25
+        ],
+        "position": [
+          -47.781585693359375,
+          1.1787968158721924,
+          25.17486000061035
+        ],
+        "error": 0.2797871139969765
+      },
+      {
+        "target": [
+          -50,
+          -20
+        ],
+        "position": [
+          -49.987701416015625,
+          1.2170925617218018,
+          -19.756160736083984
+        ],
+        "error": 0.24414922034510994
+      },
+      {
+        "target": [
+          -52,
+          -40
+        ],
+        "position": [
+          -51.99119567871094,
+          1.2696364402770997,
+          -39.72226333618164
+        ],
+        "error": 0.2778761783642373
+      },
+      {
+        "target": [
+          -52,
+          -53
+        ],
+        "position": [
+          -51.999534606933594,
+          1.217999029159546,
+          -52.84360122680664
+        ],
+        "error": 0.15639946562278953
+      },
+      {
+        "target": [
+          -52,
+          -40
+        ],
+        "position": [
+          -51.99896240234375,
+          1.2793703556060791,
+          -40.22151184082031
+        ],
+        "error": 0.22151427094546242
+      },
+      {
+        "target": [
+          -50,
+          -20
+        ],
+        "position": [
+          -50.06263732910156,
+          1.1988649845123291,
+          -20.189151763916016
+        ],
+        "error": 0.19925316757712425
+      },
+      {
+        "target": [
+          -48,
+          25
+        ],
+        "position": [
+          -48.005462646484375,
+          1.1300175666809082,
+          24.690357208251953
+        ],
+        "error": 0.3096909733720658
+      },
+      {
+        "target": [
+          -22,
+          44
+        ],
+        "position": [
+          -22.187461853027344,
+          1.2135231971740723,
+          43.864559173583984
+        ],
+        "error": 0.23127075863735713
+      },
+      {
+        "target": [
+          -5,
+          44
+        ],
+        "position": [
+          -5.228621959686279,
+          1.2179971218109131,
+          44.00154113769531
+        ],
+        "error": 0.22862715402198103
+      },
+      {
+        "target": [
+          11,
+          44
+        ],
+        "position": [
+          10.852422714233398,
+          1.717698621749878,
+          44.00001525878906
+        ],
+        "error": 0.14757728655544466
+      },
+      {
+        "target": [
+          27,
+          44
+        ],
+        "position": [
+          26.70977020263672,
+          1.2810571670532227,
+          44.00001907348633
+        ],
+        "error": 0.29022979799002235
+      },
+      {
+        "target": [
+          37,
+          -4
+        ],
+        "position": [
+          36.95378112792969,
+          1.2180865287780762,
+          -3.7554829120635986
+        ],
+        "error": 0.2488469216774637
+      },
+      {
+        "target": [
+          25,
+          -38
+        ],
+        "position": [
+          25.16202163696289,
+          1.2202156066894532,
+          -37.85084915161133
+        ],
+        "error": 0.22022031336639977
+      },
+      {
+        "target": [
+          11,
+          -38
+        ],
+        "position": [
+          11.154380798339844,
+          3.366354751586914,
+          -37.99977493286133
+        ],
+        "error": 0.1543809623990744
+      },
+      {
+        "target": [
+          -3,
+          -38
+        ],
+        "position": [
+          -2.7735424041748047,
+          1.3293216705322266,
+          -37.9997444152832
+        ],
+        "error": 0.22645774005424274
+      },
+      {
+        "target": [
+          -24,
+          -19
+        ],
+        "position": [
+          -23.855375289916992,
+          1.1693822622299195,
+          -19.134260177612305
+        ],
+        "error": 0.19733753332572512
+      },
+      {
+        "target": [
+          -50,
+          -20
+        ],
+        "position": [
+          -49.815399169921875,
+          1.1981943130493165,
+          -19.992719650268555
+        ],
+        "error": 0.1847443367406561
+      },
+      {
+        "target": [
+          -52,
+          -40
+        ],
+        "position": [
+          -51.98811340332031,
+          1.2640629291534424,
+          -39.70402145385742
+        ],
+        "error": 0.2962171348138048
+      },
+      {
+        "target": [
+          -52,
+          -53
+        ],
+        "position": [
+          -51.99907302856445,
+          1.1915956020355225,
+          -52.787025451660156
+        ],
+        "error": 0.21297656565125364
+      },
+      {
+        "target": [
+          49,
+          -51
+        ],
+        "position": [
+          48.9652099609375,
+          1.2177663326263428,
+          -50.86357879638672
+        ],
+        "error": 0.14078739863093792
+      },
+      {
+        "target": [
+          37,
+          -4
+        ],
+        "position": [
+          37.05513381958008,
+          1.2180984497070313,
+          -4.214677333831787
+        ],
+        "error": 0.22164407441349107
+      },
+      {
+        "target": [
+          -65,
+          48
+        ],
+        "position": [
+          -64.73241424560547,
+          1.2143927097320557,
+          47.99652862548828
+        ],
+        "error": 0.26760827041758445
+      },
+      {
+        "target": [
+          -22,
+          44
+        ],
+        "position": [
+          -22.234426498413086,
+          1.2098942279815674,
+          44.02311325073242
+        ],
+        "error": 0.23556316672527647
+      }
+    ],
+    "collisions": {
+      "house": {
+        "mode": "paused",
+        "position": [
+          -59.61199951171875,
+          1.578099536895752,
+          1.005261778831482
+        ],
+        "yaw": 1.5707963267948966,
+        "grounded": true,
+        "speed": 0.002639874535921669,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 1131,
+        "triangles": 4836699,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 161,
+        "camera": [
+          -54.548715825411215,
+          4.594356600904872,
+          1.005261778239347
+        ],
+        "cameraDistance": 5.3
+      },
+      "river": {
+        "mode": "paused",
+        "position": [
+          2.3340718746185303,
+          1.2175825119018555,
+          -1.2484842538833618
+        ],
+        "yaw": -1.5707963267948966,
+        "grounded": true,
+        "speed": 0.1416336067064121,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 1131,
+        "triangles": 4836699,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 161,
+        "camera": [
+          -2.7292117804123674,
+          4.233839616481822,
+          -1.248484113384968
+        ],
+        "cameraDistance": 5.3
+      },
+      "rail": {
+        "mode": "paused",
+        "position": [
+          11.003165245056152,
+          3.3679788589477537,
+          -36.19810104370117
+        ],
+        "yaw": 0,
+        "grounded": true,
+        "speed": 9.811571817926318e-05,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 1131,
+        "triangles": 4836699,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 161,
+        "camera": [
+          11.00316524469995,
+          6.384235969109854,
+          -31.134817854112477
+        ],
+        "cameraDistance": 5.3
+      },
+      "edge": {
+        "mode": "paused",
+        "position": [
+          -87.201904296875,
+          1.2179999828338623,
+          80.00498962402344
+        ],
+        "yaw": 1.5707963267948966,
+        "grounded": true,
+        "speed": 0.0019686204223941634,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 1131,
+        "triangles": 4836699,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 161,
+        "camera": [
+          -82.13862076925278,
+          4.234257087366848,
+          80.00498962346192
+        ],
+        "cameraDistance": 5.3
+      },
+      "room": {
+        "mode": "paused",
+        "position": [
+          -51.99440383911133,
+          1.5881436347961426,
+          -63.11442947387695
+        ],
+        "yaw": 0,
+        "grounded": true,
+        "speed": 2.1981752834795056,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 1131,
+        "triangles": 4836699,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 161,
+        "camera": [
+          -51.994403839741096,
+          4.604400697674947,
+          -58.051144943282154
+        ],
+        "cameraDistance": 5.3
+      },
+      "table": {
+        "mode": "paused",
+        "position": [
+          -51.99469757080078,
+          1.5880909442901612,
+          -65.3019027709961
+        ],
+        "yaw": 0,
+        "grounded": true,
+        "speed": 0.00022760858645119007,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 1131,
+        "triangles": 4836699,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 161,
+        "camera": [
+          -51.99469757076773,
+          3.9763211914946233,
+          -62.268859199377204
+        ],
+        "cameraDistance": 3.1748429584503173
+      },
+      "camera": {
+        "mode": "paused",
+        "position": [
+          -56,
+          1.3,
+          -60.5
+        ],
+        "yaw": 3.141592653589793,
+        "grounded": true,
+        "speed": 0,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 1131,
+        "triangles": 4836699,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 161,
+        "camera": [
+          -56,
+          2.852652459436135,
+          -61.523100562372996
+        ],
+        "cameraDistance": 1.0282374668121337
+      },
+      "forward": 4.21383315683312,
+      "diagonal": 4.148431626980976
+    },
+    "performance": {
+      "averageFrameMs": 32.087916666691505,
+      "p95FrameMs": 49.900000000001455,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce GT 730 (0x00001287) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "state": {
+        "mode": "playing",
+        "position": [
+          -24.00076675415039,
+          1.1766732215881348,
+          -18.9985294342041
+        ],
+        "yaw": -0.7,
+        "grounded": true,
+        "speed": 0,
+        "visited": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "calls": 433,
+        "triangles": 1812953,
+        "geometries": 176,
+        "textures": 63,
+        "frame": 572,
+        "camera": [
+          -27.01847943436211,
+          3.6743159274703263,
+          -15.415777462239905
+        ],
+        "cameraDistance": 4.8
+      }
+    },
+    "errors": [],
+    "requests": []
+  },
+  "production": {
+    "date": "2026-10-21T02:36:23.268Z",
+    "base": "http://127.0.0.1:8002/",
+    "gzip": true,
+    "pathTraversalBlocked": true,
+    "directoryListingBlocked": true,
+    "head": true,
+    "browsers": [
+      {
+        "name": "Chrome",
+        "version": "155.0.8059.80",
+        "passed": true,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": []
+      },
+      {
+        "name": "Edge",
+        "version": "155.0.4283.62",
+        "passed": true,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": []
+      }
+    ]
+  },
+  "stability": {
+    "passed": true,
+    "browser": "155.0.8059.80",
+    "durationSeconds": 600.007,
+    "geometryGrowthAfterWarmup": 0,
+    "textureGrowthAfterWarmup": 0,
+    "errors": []
+  },
+  "stabilityResources": {
+    "samples": 60,
+    "maxGeometries": 176,
+    "maxTextures": 63
+  },
+  "package": {
+    "date": "2026-10-21T02:38:31.483056+00:00",
+    "passed": true,
+    "files": 9,
+    "archiveBytes": 1846441,
+    "sha256": "da01b6dd300170f1058403f5abe4241a1c0f87ba56f9e342a993f624469a8f86",
+    "allFilesByteIdentical": true,
+    "extractedServerWorks": true,
+    "gzipBundleBytes": 1833902
+  },
+  "artReview": {
+    "date": "2026-10-21T02:17:35.531Z",
+    "errors": [],
+    "views": [
+      {
+        "name": "courtyard-clean",
+        "state": {
+          "mode": "photo",
+          "position": [
+            -52,
+            1.2200000762939454,
+            -53
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 302,
+          "triangles": 1399003,
+          "geometries": 176,
+          "textures": 63,
+          "frame": 96,
+          "camera": [
+            -52,
+            4.2362571715990445,
+            -47.93671660763429
+          ],
+          "cameraDistance": 5.299999999999999
+        }
+      },
+      {
+        "name": "character-front",
+        "state": {
+          "mode": "photo",
+          "position": [
+            -52,
+            1.2200000762939454,
+            -53
+          ],
+          "yaw": 3.141592653589793,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 708,
+          "triangles": 3076376,
+          "geometries": 176,
+          "textures": 63,
+          "frame": 125,
+          "camera": [
+            -52,
+            2.825906493140501,
+            -55.595321403831534
+          ],
+          "cameraDistance": 2.6
+        }
+      },
+      {
+        "name": "square",
+        "state": {
+          "mode": "photo",
+          "position": [
+            -24,
+            1.2200000762939454,
+            -19
+          ],
+          "yaw": -0.7,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 437,
+          "triangles": 1822993,
+          "geometries": 176,
+          "textures": 63,
+          "frame": 158,
+          "camera": [
+            -27.3320591082813,
+            3.8266170786225526,
+            -15.04404003952972
+          ],
+          "cameraDistance": 5.299999999999999
+        }
+      },
+      {
+        "name": "river",
+        "state": {
+          "mode": "photo",
+          "position": [
+            -3,
+            1.2200000762939454,
+            -33
+          ],
+          "yaw": -1.16,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 328,
+          "triangles": 1224382,
+          "geometries": 176,
+          "textures": 63,
+          "frame": 199,
+          "camera": [
+            -7.909631960574355,
+            3.9238764257067964,
+            -30.861470911327544
+          ],
+          "cameraDistance": 5.499999868273483
+        }
+      },
+      {
+        "name": "stone-bridge",
+        "state": {
+          "mode": "photo",
+          "position": [
+            7,
+            3.350000190734863,
+            -38
+          ],
+          "yaw": -1.57,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 643,
+          "triangles": 2815289,
+          "geometries": 176,
+          "textures": 63,
+          "frame": 236,
+          "camera": [
+            2.0996686645333513,
+            5.793346844710169,
+            -37.996097734028844
+          ],
+          "cameraDistance": 5
+        }
+      },
+      {
+        "name": "bamboo",
+        "state": {
+          "mode": "photo",
+          "position": [
+            37,
+            1.2200000762939454,
+            -4
+          ],
+          "yaw": -0.4,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 326,
+          "triangles": 1224695,
+          "geometries": 176,
+          "textures": 63,
+          "frame": 278,
+          "camera": [
+            35.00024497374446,
+            3.9812410603429167,
+            0.729865422685509
+          ],
+          "cameraDistance": 5.299999999999999
+        }
+      },
+      {
+        "name": "tea-room",
+        "state": {
+          "mode": "photo",
+          "position": [
+            -52,
+            1.5899999618530274,
+            -63.099998474121094
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 221,
+          "triangles": 1065706,
+          "geometries": 176,
+          "textures": 63,
+          "frame": 319,
+          "camera": [
+            -52,
+            3.720312340871159,
+            -59.361392441526235
+          ],
+          "cameraDistance": 3.8
+        }
+      }
+    ],
+    "qualityChecks": [
+      {
+        "quality": "low",
+        "skyLuminance": 0.7846816012254696
+      },
+      {
+        "quality": "standard",
+        "skyLuminance": 0.7845683301470369
+      },
+      {
+        "quality": "high",
+        "skyLuminance": 0.7845683301470369
+      }
+    ]
+  }
+}
