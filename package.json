@@ -1,9 +1,9 @@
 {
   "name": "tingyu-town",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "听雨小镇：紧凑雨夜街区中的第三人称江南漫游游戏。",
+  "description": "听雨小镇：支持天气与昼夜切换的第三人称江南街区漫游游戏。",
   "engines": {
     "node": "^24.0.0"
   },
@@ -19,6 +19,7 @@
     "test": "node scripts/test-game.mjs",
     "test:production": "node scripts/test-production.mjs",
     "test:art": "node scripts/capture-art-review.mjs",
+    "test:climate": "node scripts/test-climate.mjs",
     "test:stability": "node scripts/test-stability.mjs 600",
     "test:package": "python scripts/test-package.py",
     "play": "python scripts/play.py",

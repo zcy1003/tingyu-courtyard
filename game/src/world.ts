@@ -15,6 +15,7 @@ export class Town {
   wet:WetSurfaces;
   rain:Rain;
   quality='standard';
+  windStrength = 1;
   constructor(public scene:T.Scene,public physics:Physics){
     const b=new Builder(scene,physics),m=this.materials;
     this.lighting=new NightLighting(scene);
@@ -90,8 +91,16 @@ export class Town {
     }
   }
   setQuality(quality:string){this.quality=quality;this.wet.setQuality(quality);}
+  setClimate(rain:number,wetness:number,lamps:number,wind:number){
+    this.rain.setIntensity(rain);this.wet.setWeather(wetness,rain);this.lighting.strength=lamps;this.windStrength=.45+wind;
+    this.materials.ground.roughness=T.MathUtils.lerp(.82,.32,wetness);
+    this.materials.paving.forEach((material,i)=>{material.roughness=T.MathUtils.lerp(.83,.34+i*.027,wetness);});
+    this.materials.paper.emissiveIntensity=.28*lamps;this.materials.warm.emissiveIntensity=1.7*Math.max(.2,lamps);
+    this.materials.lantern.color.setRGB(.80,.055,.025).multiplyScalar(.42+.58*lamps);
+    this.materials.paperLantern.color.setRGB(1.15,.70,.28).multiplyScalar(.45+.55*lamps);
+  }
   update(time:number,camera:T.Camera,dt=.016){
-    this.materials.wind.value=time;this.wet.time=time;this.rain.update(dt);this.lighting.update(camera,time);
+    this.materials.wind.value=time*this.windStrength;this.wet.time=time;this.rain.update(dt);this.lighting.update(camera,time);
   }
   dispose(){this.wet.dispose();this.lighting.dispose();}
 }

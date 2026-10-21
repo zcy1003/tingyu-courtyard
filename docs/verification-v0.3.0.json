@@ -1,0 +1,2005 @@
+{
+  "version": "0.3.0",
+  "verifiedOn": "2026-10-21",
+  "timeZone": "Asia/Shanghai",
+  "times": [
+    "dawn",
+    "day",
+    "sunset",
+    "night"
+  ],
+  "weathers": [
+    "clear",
+    "cloudy",
+    "drizzle",
+    "rain"
+  ],
+  "functional": {
+    "date": "2026-10-21T04:37:08.309Z",
+    "browser": "155.0.8059.80",
+    "viewport": {
+      "width": 1440,
+      "height": 900,
+      "pixelRatio": 1
+    },
+    "checks": [
+      "Start enters the game",
+      "Real keyboard moves the player",
+      "Mouse drag rotates the camera",
+      "Blur pauses and clears movement",
+      "No stuck keys after blur",
+      "Map opens",
+      "HUD can be hidden while continuing third-person play",
+      "Photo mode hides HUD",
+      "Photo download succeeds",
+      "Reset returns to the courtyard",
+      "Both directions of the full loop and both branches are walkable",
+      "House wall blocks the player",
+      "River bank blocks falling into water",
+      "Bridge railing is solid",
+      "World edge is contained",
+      "Tea room steps can be climbed",
+      "Tea table blocks the player",
+      "Camera avoids the front wall",
+      "Diagonal walking has normalized speed",
+      "No browser runtime or shader errors"
+    ],
+    "routes": [
+      {
+        "target": [
+          -13,
+          -7
+        ],
+        "position": [
+          -13.00051212310791,
+          1.2783844947814942,
+          -7.166435718536377
+        ],
+        "error": 0.16643650643653196
+      },
+      {
+        "target": [
+          -13,
+          -3
+        ],
+        "position": [
+          -12.966757774353027,
+          1.2018831253051758,
+          -3.286956548690796
+        ],
+        "error": 0.2888755898349623
+      },
+      {
+        "target": [
+          2.5,
+          -3
+        ],
+        "position": [
+          2.2724452018737793,
+          1.2179871082305909,
+          -3.0003092288970947
+        ],
+        "error": 0.22755500823487904
+      },
+      {
+        "target": [
+          8,
+          -3
+        ],
+        "position": [
+          7.862098693847656,
+          2.1666791915893553,
+          -2.9999849796295166
+        ],
+        "error": 0.13790130697036185
+      },
+      {
+        "target": [
+          13.5,
+          -3
+        ],
+        "position": [
+          13.363553047180176,
+          1.3126616954803467,
+          -3.000044822692871
+        ],
+        "error": 0.13644696018192978
+      },
+      {
+        "target": [
+          15,
+          5
+        ],
+        "position": [
+          14.947681427001953,
+          1.217705535888672,
+          4.699403285980225
+        ],
+        "error": 0.3051157445299056
+      },
+      {
+        "target": [
+          13.5,
+          18
+        ],
+        "position": [
+          13.659093856811523,
+          1.22205548286438,
+          17.873037338256836
+        ],
+        "error": 0.2035445227759141
+      },
+      {
+        "target": [
+          8,
+          18
+        ],
+        "position": [
+          8.192962646484375,
+          1.5173891067504883,
+          18.0004940032959
+        ],
+        "error": 0.1929632788317773
+      },
+      {
+        "target": [
+          2.5,
+          18
+        ],
+        "position": [
+          2.7376325130462646,
+          1.2856960773468018,
+          18.000051498413086
+        ],
+        "error": 0.23763251862649123
+      },
+      {
+        "target": [
+          -1,
+          18
+        ],
+        "position": [
+          -0.7677916884422302,
+          1.2207181930541993,
+          17.999635696411133
+        ],
+        "error": 0.23220859732924434
+      },
+      {
+        "target": [
+          -10,
+          18
+        ],
+        "position": [
+          -9.748141288757324,
+          1.2179937839508057,
+          17.9992618560791
+        ],
+        "error": 0.2518597929111939
+      },
+      {
+        "target": [
+          -10,
+          6
+        ],
+        "position": [
+          -9.950407981872559,
+          1.1955941200256348,
+          6.2296552658081055
+        ],
+        "error": 0.23494873776069547
+      },
+      {
+        "target": [
+          -10,
+          -3
+        ],
+        "position": [
+          -9.999799728393555,
+          1.2195566177368165,
+          -2.8446500301361084
+        ],
+        "error": 0.15535009895532215
+      },
+      {
+        "target": [
+          -13,
+          -3
+        ],
+        "position": [
+          -12.834346771240234,
+          1.2179971218109131,
+          -3.000067949295044
+        ],
+        "error": 0.16565324269582513
+      },
+      {
+        "target": [
+          -13,
+          -7
+        ],
+        "position": [
+          -12.999263763427734,
+          1.275764036178589,
+          -6.751553535461426
+        ],
+        "error": 0.2484475554035647
+      },
+      {
+        "target": [
+          -13,
+          -12.5
+        ],
+        "position": [
+          -12.999186515808105,
+          1.1980393409729004,
+          -12.369248390197754
+        ],
+        "error": 0.13075414036430844
+      },
+      {
+        "target": [
+          -13,
+          -7
+        ],
+        "position": [
+          -12.99969482421875,
+          1.2802095890045166,
+          -7.19479513168335
+        ],
+        "error": 0.19479537073501255
+      },
+      {
+        "target": [
+          -13,
+          -3
+        ],
+        "position": [
+          -12.945430755615234,
+          1.1936958312988282,
+          -3.275629758834839
+        ],
+        "error": 0.2809796547582684
+      },
+      {
+        "target": [
+          -10,
+          -3
+        ],
+        "position": [
+          -10.209504127502441,
+          1.2018306732177735,
+          -3.0125956535339355
+        ],
+        "error": 0.2098824192935325
+      },
+      {
+        "target": [
+          -10,
+          6
+        ],
+        "position": [
+          -10.00124740600586,
+          1.1989920616149903,
+          5.843276023864746
+        ],
+        "error": 0.1567289402675431
+      },
+      {
+        "target": [
+          -10,
+          18
+        ],
+        "position": [
+          -10.00002670288086,
+          1.203519868850708,
+          17.759872436523438
+        ],
+        "error": 0.24012756496128132
+      },
+      {
+        "target": [
+          -1,
+          18
+        ],
+        "position": [
+          -1.2285947799682617,
+          1.217421579360962,
+          17.996267318725586
+        ],
+        "error": 0.22862525306324835
+      },
+      {
+        "target": [
+          2.5,
+          18
+        ],
+        "position": [
+          2.35506272315979,
+          1.2316344261169434,
+          17.998905181884766
+        ],
+        "error": 0.14494141176544786
+      },
+      {
+        "target": [
+          8,
+          18
+        ],
+        "position": [
+          7.78306770324707,
+          1.5172565460205079,
+          17.99991798400879
+        ],
+        "error": 0.21693231225689721
+      },
+      {
+        "target": [
+          13.5,
+          18
+        ],
+        "position": [
+          13.238334655761719,
+          1.2874093532562256,
+          17.99995231628418
+        ],
+        "error": 0.2616653485830231
+      },
+      {
+        "target": [
+          15,
+          5
+        ],
+        "position": [
+          14.98189640045166,
+          1.2183809757232666,
+          5.182126522064209
+        ],
+        "error": 0.18302407042739338
+      },
+      {
+        "target": [
+          13.5,
+          -3
+        ],
+        "position": [
+          13.664178848266602,
+          1.218743133544922,
+          -2.8683972358703613
+        ],
+        "error": 0.21041383448981937
+      },
+      {
+        "target": [
+          8,
+          -3
+        ],
+        "position": [
+          8.206986427307129,
+          2.1655035495758055,
+          -2.9999654293060303
+        ],
+        "error": 0.20698643019411261
+      },
+      {
+        "target": [
+          2.5,
+          -3
+        ],
+        "position": [
+          2.7142093181610107,
+          1.3324716567993165,
+          -3.000105381011963
+        ],
+        "error": 0.2142093440822851
+      },
+      {
+        "target": [
+          -13,
+          -3
+        ],
+        "position": [
+          -12.796489715576172,
+          1.2034333229064942,
+          -3.0097768306732178
+        ],
+        "error": 0.20374499327414206
+      },
+      {
+        "target": [
+          -13,
+          -7
+        ],
+        "position": [
+          -13.00102710723877,
+          1.261632251739502,
+          -6.698858737945557
+        ],
+        "error": 0.30114301363475604
+      },
+      {
+        "target": [
+          -13,
+          -12.5
+        ],
+        "position": [
+          -13.000019073486328,
+          1.2056961536407471,
+          -12.330039978027344
+        ],
+        "error": 0.1699600230429017
+      },
+      {
+        "target": [
+          15,
+          -22
+        ],
+        "position": [
+          14.986071586608887,
+          1.218100118637085,
+          -21.790239334106445
+        ],
+        "error": 0.2102225907358703
+      },
+      {
+        "target": [
+          13.5,
+          -3
+        ],
+        "position": [
+          13.660534858703613,
+          1.221180009841919,
+          -3.168682813644409
+        ],
+        "error": 0.23286333433579354
+      },
+      {
+        "target": [
+          -12,
+          20
+        ],
+        "position": [
+          -11.8333101272583,
+          1.1990871906280518,
+          19.839012145996094
+        ],
+        "error": 0.23173822043725742
+      },
+      {
+        "target": [
+          -24,
+          20
+        ],
+        "position": [
+          -23.85793685913086,
+          1.2180874824523926,
+          20.000280380249023
+        ],
+        "error": 0.1420634175524767
+      },
+      {
+        "target": [
+          -12,
+          20
+        ],
+        "position": [
+          -12.235698699951172,
+          1.2191060066223145,
+          19.998743057250977
+        ],
+        "error": 0.23570205146274578
+      },
+      {
+        "target": [
+          -10,
+          18
+        ],
+        "position": [
+          -10.09934139251709,
+          1.2179937839508057,
+          18.09635353088379
+        ],
+        "error": 0.13839333503101875
+      }
+    ],
+    "collisions": {
+      "house": {
+        "mode": "paused",
+        "position": [
+          -22.673099517822266,
+          1.2179933071136475,
+          3.0006561279296875
+        ],
+        "yaw": -1.5707963267948966,
+        "grounded": true,
+        "speed": 4.924061091089811e-05,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 1364,
+        "triangles": 5172094,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 181,
+        "camera": [
+          -27.238388148949785,
+          3.5951956605498174,
+          3.0006561278558506
+        ],
+        "cameraDistance": 4.7,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26.09934139251709,
+          33.2179937839508,
+          38.09635353088379
+        ]
+      },
+      "river": {
+        "mode": "paused",
+        "position": [
+          4.501900672912598,
+          1.2180874824523926,
+          9.000054359436035
+        ],
+        "yaw": -1.5707963267948966,
+        "grounded": true,
+        "speed": 2.4711498901732715e-05,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 1364,
+        "triangles": 5172094,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 181,
+        "camera": [
+          -0.06338788788046212,
+          3.595289835877965,
+          9.000054359429917
+        ],
+        "cameraDistance": 4.7,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26.09934139251709,
+          33.2179937839508,
+          38.09635353088379
+        ]
+      },
+      "rail": {
+        "mode": "paused",
+        "position": [
+          8.03630256652832,
+          2.167664575576782,
+          -1.7981010675430298
+        ],
+        "yaw": 0,
+        "grounded": true,
+        "speed": 0.018759810444554364,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 1364,
+        "triangles": 5172094,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 181,
+        "camera": [
+          8.036302562443005,
+          4.544866934676705,
+          2.767187279005603
+        ],
+        "cameraDistance": 4.7,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26.09934139251709,
+          33.2179937839508,
+          38.09635353088379
+        ]
+      },
+      "edge": {
+        "mode": "paused",
+        "position": [
+          -27.20210838317871,
+          1.2179885387420655,
+          22.999292373657227
+        ],
+        "yaw": 1.5707963267948966,
+        "grounded": true,
+        "speed": 0.012146352800147626,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 1364,
+        "triangles": 5172094,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 181,
+        "camera": [
+          -26.49656062395802,
+          2.650647863649396,
+          22.99929237373686
+        ],
+        "cameraDistance": 0.7263668823242188,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26.09934139251709,
+          33.2179937839508,
+          38.09635353088379
+        ]
+      },
+      "room": {
+        "mode": "paused",
+        "position": [
+          -12.999873161315918,
+          1.5880737781524659,
+          -19.708030700683594
+        ],
+        "yaw": 0,
+        "grounded": true,
+        "speed": 2.199999913573265,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 1364,
+        "triangles": 5172094,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 181,
+        "camera": [
+          -12.999873161330191,
+          3.9652760899415656,
+          -15.14274140772206
+        ],
+        "cameraDistance": 4.7,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26.09934139251709,
+          33.2179937839508,
+          38.09635353088379
+        ]
+      },
+      "table": {
+        "mode": "paused",
+        "position": [
+          -12.999762535095215,
+          1.5879931926727295,
+          -20.301904678344727
+        ],
+        "yaw": 0,
+        "grounded": true,
+        "speed": 0.0002671448248150123,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 1364,
+        "triangles": 5172094,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 181,
+        "camera": [
+          -12.999762535107664,
+          3.9651955368893272,
+          -15.736616129708384
+        ],
+        "cameraDistance": 4.7,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26.09934139251709,
+          33.2179937839508,
+          38.09635353088379
+        ]
+      },
+      "camera": {
+        "mode": "paused",
+        "position": [
+          -16,
+          1.3,
+          -16.799999237060547
+        ],
+        "yaw": 3.141592653589793,
+        "grounded": true,
+        "speed": 0,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 1364,
+        "triangles": 5172094,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 181,
+        "camera": [
+          -16,
+          2.657635539292256,
+          -17.773097940259618
+        ],
+        "cameraDistance": 0.9779845523834229,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26.09934139251709,
+          33.2179937839508,
+          38.09635353088379
+        ]
+      },
+      "forward": 4.188324032152397,
+      "diagonal": 4.076410864374121
+    },
+    "performance": {
+      "averageFrameMs": 27.808749999999993,
+      "p95FrameMs": 49.900000000001455,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce GT 730 (0x00001287) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "state": {
+        "mode": "playing",
+        "position": [
+          -10.000001907348633,
+          1.2180936813354493,
+          -3.0000011920928955
+        ],
+        "yaw": 0.6,
+        "grounded": true,
+        "speed": 0,
+        "visited": [
+          "A",
+          "B",
+          "D",
+          "E",
+          "F",
+          "G",
+          "C"
+        ],
+        "calls": 342,
+        "triangles": 1366980,
+        "geometries": 192,
+        "textures": 52,
+        "frame": 598,
+        "camera": [
+          -7.5754560492409,
+          3.4382852639164296,
+          0.5439476622081774
+        ],
+        "cameraDistance": 4.4,
+        "climate": {
+          "hour": 22,
+          "displayHour": 22,
+          "timeOfDay": "night",
+          "weather": "drizzle",
+          "automatic": false,
+          "transitioning": false,
+          "rain": 0.58,
+          "wetness": 1,
+          "lampStrength": 1,
+          "label": "22:00 · 细雨"
+        },
+        "rainVisible": true,
+        "rainCount": 1933,
+        "floorReflection": true,
+        "rainAudio": 0.58,
+        "audioEnabled": false,
+        "pavingRoughness": 0.34,
+        "sunPosition": [
+          -26,
+          33.2455554485321,
+          17
+        ]
+      }
+    },
+    "errors": [],
+    "requests": []
+  },
+  "climate": {
+    "date": "2026-10-21T04:41:24.171Z",
+    "passed": true,
+    "checks": [
+      "New players start in the original drizzly night",
+      "Scene controls open from the HUD",
+      "Controls pause movement",
+      "Daytime is visibly brighter than night",
+      "Sunset has a warmer palette than daytime",
+      "Heavy rain has more streaks than drizzle",
+      "Night lighting turns down in daylight",
+      "Rapid switching does not create growing geometry or texture counts",
+      "Automatic clock pauses while the controls are open",
+      "Automatic clock advances during exploration",
+      "Automatic clock pauses in the pause menu",
+      "Manual time selection disables the automatic cycle",
+      "Rain audio starts at the selected weather intensity",
+      "Rain sound fades away in clear weather",
+      "Returning from scene controls preserves photo mode",
+      "Changed time is included in saved photos",
+      "Weather and time preferences survive reload",
+      "Invalid saved preferences safely fall back to defaults",
+      "No runtime or shader errors across the environment checks"
+    ],
+    "combinations": [
+      {
+        "time": "dawn",
+        "weather": "clear",
+        "colors": {
+          "mean": [
+            0.2284579581215202,
+            0.22802859477124182,
+            0.22310354333091262
+          ],
+          "luma": 0.22776428870551924
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 247,
+          "triangles": 1062445,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 181,
+          "camera": [
+            -13,
+            3.637202382354505,
+            -7.934711518195461
+          ],
+          "cameraDistance": 4.7,
+          "climate": {
+            "hour": 6,
+            "displayHour": 5.999998514944565,
+            "timeOfDay": "dawn",
+            "weather": "clear",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0,
+            "lampStrength": 0.4500000000016172,
+            "label": "06:00 · 晴朗"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": false,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.83,
+          "sunPosition": [
+            -40.98314597102572,
+            12.289494588851966,
+            -27.450842415491678
+          ]
+        }
+      },
+      {
+        "time": "dawn",
+        "weather": "cloudy",
+        "colors": {
+          "mean": [
+            0.233225,
+            0.2322119008714597,
+            0.22803385681433067
+          ],
+          "luma": 0.23212563096526267
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 248,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 273,
+          "camera": [
+            -13,
+            3.637202382354505,
+            -7.934711518195461
+          ],
+          "cameraDistance": 4.7,
+          "climate": {
+            "hour": 6,
+            "displayHour": 5.999999999990486,
+            "timeOfDay": "dawn",
+            "weather": "cloudy",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0.16,
+            "lampStrength": 0.45,
+            "label": "06:00 · 多云"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": true,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.7515999999999999,
+          "sunPosition": [
+            -40.98314597102572,
+            12.289494588851966,
+            -27.450842415491678
+          ]
+        }
+      },
+      {
+        "time": "dawn",
+        "weather": "drizzle",
+        "colors": {
+          "mean": [
+            0.26070773723069474,
+            0.25340516521423384,
+            0.24694476216412492
+          ],
+          "luma": 0.2544912509247156
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 249,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 400,
+          "camera": [
+            -13,
+            3.637202382354505,
+            -7.934711518195461
+          ],
+          "cameraDistance": 4.7,
+          "climate": {
+            "hour": 6,
+            "displayHour": 5.9999999999999964,
+            "timeOfDay": "dawn",
+            "weather": "drizzle",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.58,
+            "wetness": 1,
+            "lampStrength": 0.45,
+            "label": "06:00 · 细雨"
+          },
+          "rainVisible": true,
+          "rainCount": 1933,
+          "floorReflection": true,
+          "rainAudio": 0.58,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -40.98314597102572,
+            12.289494588851966,
+            -27.450842415491678
+          ]
+        }
+      },
+      {
+        "time": "dawn",
+        "weather": "rain",
+        "colors": {
+          "mean": [
+            0.2602090383684338,
+            0.25325426046961996,
+            0.24733563301863953
+          ],
+          "luma": 0.254305521348947
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 249,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 465,
+          "camera": [
+            -13,
+            3.637202382354505,
+            -7.934711518195461
+          ],
+          "cameraDistance": 4.7,
+          "climate": {
+            "hour": 6,
+            "displayHour": 5.9999999999999964,
+            "timeOfDay": "dawn",
+            "weather": "rain",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.9960494503889272,
+            "wetness": 1,
+            "lampStrength": 0.45,
+            "label": "06:00 · 大雨"
+          },
+          "rainVisible": true,
+          "rainCount": 2400,
+          "floorReflection": true,
+          "rainAudio": 0.9944872989526781,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -40.98314597102572,
+            12.289494588851966,
+            -27.450842415491678
+          ]
+        }
+      },
+      {
+        "time": "day",
+        "weather": "clear",
+        "colors": {
+          "mean": [
+            0.3818827190752844,
+            0.40913227124183005,
+            0.3837454127329944
+          ],
+          "luma": 0.40150608526688447
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 247,
+          "triangles": 1062445,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 543,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 12,
+            "displayHour": 11.999998790423824,
+            "timeOfDay": "day",
+            "weather": "clear",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0,
+            "lampStrength": 0.05999999999999999,
+            "label": "12:00 · 晴朗"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": false,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.83,
+          "sunPosition": [
+            -29.029939980143354,
+            33.2076050728961,
+            7.412675057915209
+          ]
+        }
+      },
+      {
+        "time": "day",
+        "weather": "cloudy",
+        "colors": {
+          "mean": [
+            0.321417480634229,
+            0.3509693536673929,
+            0.33488769970951343
+          ],
+          "luma": 0.34352553004478337
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 248,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 596,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 12,
+            "displayHour": 11.99999999999634,
+            "timeOfDay": "day",
+            "weather": "cloudy",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0.16,
+            "lampStrength": 0.06,
+            "label": "12:00 · 多云"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": true,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.7515999999999999,
+          "sunPosition": [
+            -29.029939980143354,
+            33.2076050728961,
+            7.412675057915209
+          ]
+        }
+      },
+      {
+        "time": "day",
+        "weather": "drizzle",
+        "colors": {
+          "mean": [
+            0.34250840595497456,
+            0.3697538489469862,
+            0.351271063301864
+          ],
+          "luma": 0.3626270106433067
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 249,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 671,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 12,
+            "displayHour": 11.999999999999993,
+            "timeOfDay": "day",
+            "weather": "drizzle",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.58,
+            "wetness": 1,
+            "lampStrength": 0.06,
+            "label": "12:00 · 细雨"
+          },
+          "rainVisible": true,
+          "rainCount": 1933,
+          "floorReflection": true,
+          "rainAudio": 0.58,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -29.029939980143354,
+            33.2076050728961,
+            7.412675057915209
+          ]
+        }
+      },
+      {
+        "time": "day",
+        "weather": "rain",
+        "colors": {
+          "mean": [
+            0.3077724431130477,
+            0.3356493917937545,
+            0.32289110687484873
+          ],
+          "luma": 0.3288016043330912
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 249,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 713,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 12,
+            "displayHour": 11.999999999999993,
+            "timeOfDay": "day",
+            "weather": "rain",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.9961815113182803,
+            "wetness": 1,
+            "lampStrength": 0.06,
+            "label": "12:00 · 大雨"
+          },
+          "rainVisible": true,
+          "rainCount": 2400,
+          "floorReflection": true,
+          "rainAudio": 0.995337952584124,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -29.029939980143354,
+            33.2076050728961,
+            7.412675057915209
+          ]
+        }
+      },
+      {
+        "time": "sunset",
+        "weather": "clear",
+        "colors": {
+          "mean": [
+            0.2862494160009683,
+            0.2408060941660615,
+            0.21970495037521182
+          ],
+          "luma": 0.24894384180646334
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 464,
+          "triangles": 2088743,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 789,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 18,
+            "displayHour": 17.999998883978613,
+            "timeOfDay": "sunset",
+            "weather": "clear",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0,
+            "lampStrength": 0.6499999999997551,
+            "label": "18:00 · 晴朗"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": false,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.83,
+          "sunPosition": [
+            -44.97848109961036,
+            9.292278388731422,
+            2.5067246563717607
+          ]
+        }
+      },
+      {
+        "time": "sunset",
+        "weather": "cloudy",
+        "colors": {
+          "mean": [
+            0.2861401264826918,
+            0.24048422597434035,
+            0.22228608992979906
+          ],
+          "luma": 0.24887676499999997
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 248,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 844,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 18,
+            "displayHour": 17.99999999999777,
+            "timeOfDay": "sunset",
+            "weather": "cloudy",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0.16,
+            "lampStrength": 0.65,
+            "label": "18:00 · 多云"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": true,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.7515999999999999,
+          "sunPosition": [
+            -44.97848109961036,
+            9.292278388731422,
+            2.5067246563717607
+          ]
+        }
+      },
+      {
+        "time": "sunset",
+        "weather": "drizzle",
+        "colors": {
+          "mean": [
+            0.3169439905591866,
+            0.2586584059549746,
+            0.23707440994916484
+          ],
+          "luma": 0.2694915567302106
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 718,
+          "triangles": 3212715,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 920,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 18,
+            "displayHour": 17.999999999999993,
+            "timeOfDay": "sunset",
+            "weather": "drizzle",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.58,
+            "wetness": 1,
+            "lampStrength": 0.65,
+            "label": "18:00 · 细雨"
+          },
+          "rainVisible": true,
+          "rainCount": 1933,
+          "floorReflection": true,
+          "rainAudio": 0.58,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -44.97848109961036,
+            9.292278388731422,
+            2.5067246563717607
+          ]
+        }
+      },
+      {
+        "time": "sunset",
+        "weather": "rain",
+        "colors": {
+          "mean": [
+            0.31375469619946744,
+            0.256650021181312,
+            0.236716802832244
+          ],
+          "luma": 0.2673512967253691
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 249,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 963,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 18,
+            "displayHour": 17.999999999999993,
+            "timeOfDay": "sunset",
+            "weather": "rain",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.9963106336911812,
+            "wetness": 1,
+            "lampStrength": 0.65,
+            "label": "18:00 · 大雨"
+          },
+          "rainVisible": true,
+          "rainCount": 2400,
+          "floorReflection": true,
+          "rainAudio": 0.9957832920740097,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -44.97848109961036,
+            9.292278388731422,
+            2.5067246563717607
+          ]
+        }
+      },
+      {
+        "time": "night",
+        "weather": "clear",
+        "colors": {
+          "mean": [
+            0.29704933127572014,
+            0.31834823589929795,
+            0.3398685215444202
+          ],
+          "luma": 0.31537385339990315
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 247,
+          "triangles": 1062445,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 1039,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 22,
+            "displayHour": 21.999999158605867,
+            "timeOfDay": "night",
+            "weather": "clear",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0,
+            "lampStrength": 1,
+            "label": "22:00 · 晴朗"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": false,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.83,
+          "sunPosition": [
+            -29,
+            33.26000003814697,
+            7.5
+          ]
+        }
+      },
+      {
+        "time": "night",
+        "weather": "cloudy",
+        "colors": {
+          "mean": [
+            0.30477150508351486,
+            0.32351440026627937,
+            0.34407430706850645
+          ],
+          "luma": 0.32101408602154446
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 248,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 1092,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 22,
+            "displayHour": 21.999999999998572,
+            "timeOfDay": "night",
+            "weather": "cloudy",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0,
+            "wetness": 0.16,
+            "lampStrength": 1,
+            "label": "22:00 · 多云"
+          },
+          "rainVisible": false,
+          "rainCount": 0,
+          "floorReflection": true,
+          "rainAudio": 0,
+          "audioEnabled": false,
+          "pavingRoughness": 0.7515999999999999,
+          "sunPosition": [
+            -29,
+            33.26000003814697,
+            7.5
+          ]
+        }
+      },
+      {
+        "time": "night",
+        "weather": "drizzle",
+        "colors": {
+          "mean": [
+            0.3277764009924957,
+            0.33768534253207455,
+            0.35184160009682885
+          ],
+          "luma": 0.3366007833569354
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 718,
+          "triangles": 3212715,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 1169,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 22,
+            "displayHour": 21.999999999999993,
+            "timeOfDay": "night",
+            "weather": "drizzle",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.58,
+            "wetness": 1,
+            "lampStrength": 1,
+            "label": "22:00 · 细雨"
+          },
+          "rainVisible": true,
+          "rainCount": 1933,
+          "floorReflection": true,
+          "rainAudio": 0.58,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -29,
+            33.26000003814697,
+            7.5
+          ]
+        }
+      },
+      {
+        "time": "night",
+        "weather": "rain",
+        "colors": {
+          "mean": [
+            0.32831140462357783,
+            0.338533315177923,
+            0.3529109931009441
+          ],
+          "luma": 0.33739820534011133
+        },
+        "state": {
+          "mode": "environment",
+          "position": [
+            -13,
+            1.2600000381469727,
+            -12.5
+          ],
+          "yaw": 0,
+          "grounded": true,
+          "speed": 0,
+          "visited": [
+            "A"
+          ],
+          "calls": 249,
+          "triangles": 1062447,
+          "geometries": 192,
+          "textures": 52,
+          "frame": 1213,
+          "camera": [
+            -13,
+            3.6372023823545048,
+            -7.934711518195462
+          ],
+          "cameraDistance": 4.699999999999999,
+          "climate": {
+            "hour": 22,
+            "displayHour": 21.999999999999993,
+            "timeOfDay": "night",
+            "weather": "rain",
+            "automatic": false,
+            "transitioning": false,
+            "rain": 0.9965448885604331,
+            "wetness": 1,
+            "lampStrength": 1,
+            "label": "22:00 · 大雨"
+          },
+          "rainVisible": true,
+          "rainCount": 2400,
+          "floorReflection": true,
+          "rainAudio": 0.9957816050534575,
+          "audioEnabled": false,
+          "pavingRoughness": 0.34,
+          "sunPosition": [
+            -29,
+            33.26000003814697,
+            7.5
+          ]
+        }
+      }
+    ],
+    "errors": []
+  },
+  "production": {
+    "date": "2026-10-21T04:45:59.495Z",
+    "base": "http://127.0.0.1:8002/",
+    "gzip": true,
+    "pathTraversalBlocked": true,
+    "directoryListingBlocked": true,
+    "head": true,
+    "browsers": [
+      {
+        "name": "Chrome",
+        "version": "155.0.8059.80",
+        "passed": true,
+        "climateControls": true,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": []
+      },
+      {
+        "name": "Edge",
+        "version": "155.0.4283.62",
+        "passed": true,
+        "climateControls": true,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": []
+      }
+    ]
+  },
+  "package": {
+    "date": "2026-10-21T04:45:29.499771+00:00",
+    "passed": true,
+    "files": 9,
+    "archiveBytes": 1854814,
+    "sha256": "1c159d8f24314148dbe8590d39697e84f39f0c43c395c7e8b0a3e56463c506f3",
+    "allFilesByteIdentical": true,
+    "extractedServerWorks": true,
+    "gzipBundleBytes": 1840124,
+    "gzipCacheTracksFileChanges": true
+  },
+  "stability": {
+    "passed": true,
+    "browser": "155.0.8059.80",
+    "durationSeconds": 600.017,
+    "startHour": 22,
+    "endHour": 3.9705200000015006,
+    "automaticCycle": true,
+    "weatherChanges": 10,
+    "geometryGrowthAfterWarmup": 0,
+    "textureGrowthAfterWarmup": 0,
+    "errors": []
+  },
+  "stabilityResources": {
+    "samples": 60,
+    "maxGeometries": 192,
+    "maxTextures": 52,
+    "timesObserved": [
+      "dawn",
+      "day",
+      "night",
+      "sunset"
+    ],
+    "weatherObserved": [
+      "clear",
+      "cloudy",
+      "drizzle",
+      "rain"
+    ]
+  }
+}

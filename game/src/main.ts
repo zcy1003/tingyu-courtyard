@@ -4,13 +4,13 @@ import { Town } from './world';
 import { Player } from './player';
 import { FollowCamera } from './camera';
 import { Ambience } from './audio';
-import { makeSky } from './atmosphere';
+import { Climate, TIMES, WEATHERS } from './climate';
 import { ScenicRenderer } from './rendering';
 import { LOCATIONS, PATHS, WAYPOINTS, HOUSES, RIVER_HALF, SPAWN, WORLD_HALF, riverX, GROUND } from './config';
 import './style.css';
 
 const $ = <E extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as E;
-type Mode = 'title' | 'playing' | 'paused' | 'map' | 'photo';
+type Mode = 'title' | 'playing' | 'paused' | 'map' | 'photo' | 'environment';
 const nextFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
 const progress = (percent: number, text: string) => { $('load-progress').style.width = `${percent}%`; $('load-label').textContent = text; };
 
@@ -18,11 +18,15 @@ class Game {
   scene = new T.Scene();
   renderer: T.WebGLRenderer;
   scenic: ScenicRenderer;
+  climate: Climate;
   camera = new T.PerspectiveCamera(50, innerWidth / innerHeight, .08, 500);
   physics!: Physics; town!: Town; player!: Player; follow!: FollowCamera;
   mode: Mode = 'title'; keys = new Set<string>(); audio = new Ambience();
   sun = new T.DirectionalLight('#a9d1ff', 1.15);
   shadowAnchor = new T.Vector3(999, 0, 999);
+  shadowDirection = new T.Vector3();
+  environmentReturn: 'playing' | 'photo' = 'playing';
+  climateUiTimer = 0;
   visited = new Set<string>(); location = 'A';
   elapsed = 0; accumulator = 0; previous = 0; mapTimer = 0; frame = 0;
   quality = 'standard'; running = true; dragging = false; pointerId = -1;
@@ -39,11 +43,7 @@ class Game {
     this.renderer.shadowMap.autoUpdate=false;
     this.renderer.domElement.setAttribute('aria-label', '可用键盘行走、拖动鼠标观察的中式小镇');
     $('world').append(this.renderer.domElement);
-    this.scene.background = new T.Color('#172332');
-    this.scene.fog = new T.Fog('#172332', 65, 180);
-    this.scene.add(new T.HemisphereLight('#b9d2f1', '#424652', .68));
-    const rim = new T.DirectionalLight('#7bafc9', .65); rim.position.set(10,15,-18); this.scene.add(rim);
-    this.scene.add(makeSky());
+    this.climate = new Climate(this.scene,this.sun,this.audio);
     this.sun.castShadow = true; this.sun.shadow.mapSize.set(2048, 2048);
     Object.assign(this.sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 100 });
     this.sun.shadow.normalBias = .025; this.sun.shadow.bias = -.00015; this.sun.shadow.radius = 3;
@@ -54,6 +54,7 @@ class Game {
     progress(12, '让溪水流进小镇…'); await nextFrame(); await RAPIER.init();
     this.physics = new Physics(); progress(30, '搭好屋檐与月洞门…'); await nextFrame();
     this.town = new Town(this.scene, this.physics);
+    this.climate.attach(this.town);this.syncClimateUI();
     progress(72, '等一阵风穿过竹林…'); await nextFrame();
     this.player = new Player(this.physics, this.scene); this.physics.world.step(); this.player.sync();
     this.follow = new FollowCamera(this.camera, this.player); this.events();
@@ -61,7 +62,7 @@ class Game {
     progress(90, '点亮窗灯，等一场雨…'); await nextFrame();
     await this.renderer.compileAsync(this.scene, this.camera);
     this.player.avatar.root.visible=false;this.renderer.shadowMap.needsUpdate=true;
-    progress(100, '走进雨巷'); ($('start') as HTMLButtonElement).disabled = false;
+    progress(100, '走进小镇'); ($('start') as HTMLButtonElement).disabled = false;
     this.previous = performance.now(); this.tick(this.previous);
     if (import.meta.env.DEV) this.debug();
   }
@@ -76,13 +77,23 @@ class Game {
     $('exit-photo').addEventListener('click', () => this.setMode('playing'), opt);
     $('save-photo').addEventListener('click', () => this.savePhoto(), opt);
     $('quality').addEventListener('change', e => this.setQuality((e.target as HTMLSelectElement).value), opt);
-    $('audio').addEventListener('click', () => { void this.audio.toggle().then(on => { $('audio').setAttribute('aria-pressed', String(on)); $('audio').setAttribute('aria-label', on ? '关闭环境声音' : '开启环境声音'); this.toast(on ? '听见雨丝、水声与檐下滴答' : '环境声音已关闭'); }).catch(() => this.toast('当前浏览器暂时无法播放声音')); }, opt);
+    for(const id of ['environment-button','pause-environment','photo-environment'])$(id).addEventListener('click',()=>this.openEnvironment(),opt);
+    $('close-environment').addEventListener('click',()=>this.setMode(this.environmentReturn),opt);
+    $('time-of-day').addEventListener('change',e=>{this.climate.selectTime((e.target as HTMLSelectElement).value);this.syncClimateUI();},opt);
+    $('weather').addEventListener('change',e=>{this.climate.selectWeather((e.target as HTMLSelectElement).value);this.syncClimateUI();},opt);
+    $('time-cycle').addEventListener('change',e=>{this.climate.setAutomatic((e.target as HTMLInputElement).checked);this.syncClimateUI();},opt);
+    $('audio').addEventListener('click', () => { void this.audio.toggle().then(on => { $('audio').setAttribute('aria-pressed', String(on)); $('audio').setAttribute('aria-label', on ? '关闭环境声音' : '开启环境声音'); this.toast(on ? '听见风声、水声与此刻的天气' : '环境声音已关闭'); }).catch(() => this.toast('当前浏览器暂时无法播放声音')); }, opt);
     window.addEventListener('keydown', e => {
       if (this.mode === 'title') return;
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
-      if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) return;
+      if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) {
+        if(e.code==='Escape'){e.preventDefault();this.setMode(this.mode==='environment'?this.environmentReturn:'playing');}
+        if(e.code==='KeyT'&&this.mode==='environment'){e.preventDefault();this.setMode(this.environmentReturn);}
+        return;
+      }
       if (!e.repeat) {
-        if (e.code === 'Escape') { this.setMode(this.mode === 'playing' ? 'paused' : 'playing'); return; }
+        if (e.code === 'Escape') { this.setMode(this.mode==='environment'?this.environmentReturn:this.mode === 'playing' ? 'paused' : 'playing'); return; }
+        if (e.code === 'KeyT') { if(this.mode==='environment')this.setMode(this.environmentReturn);else this.openEnvironment();return; }
         if (e.code === 'KeyH') { document.body.classList.toggle('hide-hud'); return; }
         if (e.code === 'KeyM') { this.setMode(this.mode === 'map' ? 'playing' : 'map'); return; }
         if (e.code === 'KeyP') { this.setMode(this.mode === 'photo' ? 'playing' : 'photo'); return; }
@@ -112,10 +123,22 @@ class Game {
   setMode(mode: Mode) {
     if (this.mode === 'title') return;
     this.mode = mode; this.clearInput(); this.accumulator = 0;
-    $('hud').hidden = mode !== 'playing'; $('pause-panel').hidden = mode !== 'paused'; $('map-panel').hidden = mode !== 'map'; $('photo-ui').hidden = mode !== 'photo';
+    $('hud').hidden = mode !== 'playing'; $('pause-panel').hidden = mode !== 'paused'; $('map-panel').hidden = mode !== 'map'; $('photo-ui').hidden = mode !== 'photo';$('environment-panel').hidden=mode!=='environment';
     if (mode === 'map') this.drawMap($<HTMLCanvasElement>('large-map'), false);
     if (mode === 'paused') $('resume').focus({ preventScroll: true });
+    else if(mode==='environment')$('close-environment').focus({preventScroll:true});
     else if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  }
+  openEnvironment(){this.environmentReturn=this.mode==='photo'?'photo':'playing';this.syncClimateUI();this.setMode('environment');}
+  syncClimateUI(){
+    $<HTMLSelectElement>('time-of-day').value=this.climate.timeOfDay;
+    $<HTMLSelectElement>('weather').value=this.climate.weather;
+    $<HTMLInputElement>('time-cycle').checked=this.climate.automatic;
+    $('environment-clock').textContent=this.climate.label;
+    $('intro-climate').textContent=`${TIMES[this.climate.timeOfDay].label} · ${WEATHERS[this.climate.weather].label}`;
+    $('environment-description').textContent=WEATHERS[this.climate.weather].note;
+    $('environment-summary').textContent=`${TIMES[this.climate.timeOfDay].label} · ${WEATHERS[this.climate.weather].label}`;
+    $('cycle-status').textContent=this.climate.automatic?'漫游与拍照时，一昼夜约 8 分钟；打开面板时暂停流转。':'时辰固定。选择新的时辰会关闭自动流转。';
   }
   reset() { this.player.reset(); this.follow.reset(); this.setMode('playing'); this.updateShadow(this.player.position); this.toast('回到听雨小院'); }
   setQuality(value: string) {
@@ -128,9 +151,10 @@ class Game {
     this.toast(value === 'low' ? '已切换为轻盈画质' : value === 'high' ? '已切换为细致画质' : '已切换为均衡画质');
   }
   updateShadow(center: T.Vector3) {
-    if (center.distanceToSquared(this.shadowAnchor) < 16) return;
+    if (center.distanceToSquared(this.shadowAnchor) < 16 && this.shadowDirection.distanceToSquared(this.climate.sunOffset)<.02) return;
     this.shadowAnchor.copy(center);
-    this.sun.position.set(center.x - 16, 32, center.z + 20); this.sun.target.position.set(center.x, 0, center.z); this.sun.target.updateMatrixWorld();
+    this.shadowDirection.copy(this.climate.sunOffset);
+    this.sun.position.copy(center).add(this.climate.sunOffset); this.sun.target.position.set(center.x, 0, center.z); this.sun.target.updateMatrixWorld();
     this.renderer.shadowMap.needsUpdate=true;
   }
   toast(text: string) { if (this.toastTimer) clearTimeout(this.toastTimer); $('toast').textContent = text; $('toast').classList.add('show'); this.toastTimer = setTimeout(() => $('toast').classList.remove('show'), 3300); }
@@ -181,9 +205,12 @@ class Game {
     requestAnimationFrame(this.tick);
     if (document.hidden) return;
     this.elapsed += dt; this.frame++;
+    this.climate.update(dt,this.elapsed,this.mode==='playing'||this.mode==='photo');
+    this.climateUiTimer+=dt;if(this.climateUiTimer>.25){this.climateUiTimer=0;this.syncClimateUI();}
     if (this.mode === 'title') {
       this.player.avatar.root.visible = false;
       this.camera.position.set(34 + Math.sin(this.elapsed * .035) * 1.5, 44, 66); this.camera.lookAt(-1, 1.4, 0);
+      this.updateShadow(new T.Vector3(-5,0,-6));
     } else {
       if (this.mode === 'playing') {
         this.accumulator = Math.min(this.accumulator + dt, 5 / 60);
@@ -203,7 +230,7 @@ class Game {
     if (this.mapTimer > .3 && this.mode !== 'title') { this.mapTimer = 0; this.drawMap($<HTMLCanvasElement>('mini-map'), true); if (this.mode === 'map') this.drawMap($<HTMLCanvasElement>('large-map'), false); }
   };
   debug() {
-    const state = () => ({ mode: this.mode, position: this.player.position.toArray(), yaw: this.follow.yaw, grounded: this.player.controller.computedGrounded(), speed: this.player.speed, visited: [...this.visited], calls: this.renderer.info.render.calls, triangles: this.renderer.info.render.triangles, geometries: this.renderer.info.memory.geometries, textures: this.renderer.info.memory.textures, frame: this.frame, camera: this.camera.position.toArray(), cameraDistance: this.follow.actualDistance });
+    const state = () => ({ mode: this.mode, position: this.player.position.toArray(), yaw: this.follow.yaw, grounded: this.player.controller.computedGrounded(), speed: this.player.speed, visited: [...this.visited], calls: this.renderer.info.render.calls, triangles: this.renderer.info.render.triangles, geometries: this.renderer.info.memory.geometries, textures: this.renderer.info.memory.textures, frame: this.frame, camera: this.camera.position.toArray(), cameraDistance: this.follow.actualDistance, climate:this.climate.snapshot(), rainVisible:this.town.rain.mesh.visible, rainCount:this.town.rain.mesh.geometry.drawRange.count/2, floorReflection:this.town.wet.floor.visible, rainAudio:this.audio.rainAmount,audioEnabled:this.audio.enabled,audioRainGain:this.audio.rainGain?.gain.value,pavingRoughness:this.town.materials.paving[0]!.roughness,sunPosition:this.sun.position.toArray() });
     Object.defineProperty(window, '__tingyu', { configurable: true, value: {
       state, layout: { spawn: SPAWN, waypoints: WAYPOINTS, locations: LOCATIONS, half: WORLD_HALF }, teleport: (x: number, y: number, z: number) => { this.player.teleport(x, y, z); this.follow.reset(); return state(); },
       face: (yaw: number) => { this.follow.yaw = yaw; },

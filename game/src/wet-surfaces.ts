@@ -20,10 +20,10 @@ export class WetSurfaces {
     const mirror = new Reflector(new T.PlaneGeometry(w, d), {
       textureWidth: 896, textureHeight: 640, multisample: 0, clipBias: .002,
       shader: {
-        uniforms: { tDiffuse: { value: null }, color: { value: new T.Color('#a2b8c4') }, textureMatrix: { value: new T.Matrix4() }, time: { value: 0 }, isWater: { value: water ? 1 : 0 }, eye: { value: new T.Vector3() } },
+        uniforms: { tDiffuse: { value: null }, color: { value: new T.Color('#a2b8c4') }, textureMatrix: { value: new T.Matrix4() }, time: { value: 0 }, isWater: { value: water ? 1 : 0 }, eye: { value: new T.Vector3() }, wetness: {value:1}, rainAmount: {value:.58} },
         vertexShader: `uniform mat4 textureMatrix;varying vec4 vMirror;varying vec3 vWorld;
           void main(){vMirror=textureMatrix*vec4(position,1.);vWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-        fragmentShader: `uniform sampler2D tDiffuse;uniform float time,isWater;uniform vec3 eye;varying vec4 vMirror;varying vec3 vWorld;
+        fragmentShader: `uniform sampler2D tDiffuse;uniform float time,isWater,wetness,rainAmount;uniform vec3 eye;varying vec4 vMirror;varying vec3 vWorld;
           float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
           float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+1.),f.x),f.y);}
           void main(){
@@ -37,14 +37,14 @@ export class WetSurfaces {
             vec3 view=normalize(eye-vWorld);float fres=pow(1.-max(view.y,0.),3.);
             vec2 cell=floor(vWorld.xz*1.8);float phase=fract(time*.72+hash(cell));
             float radius=length(fract(vWorld.xz*1.8)-.5);
-            float ring=(1.-smoothstep(.007,.025,abs(radius-phase*.40)))*(1.-phase)*step(.75,hash(cell+10.));
+            float ring=(1.-smoothstep(.007,.025,abs(radius-phase*.40)))*(1.-phase)*step(1.-rainAmount*.6,hash(cell+10.))*rainAmount;
             vec3 color;float alpha;
             if(isWater>.5){
               color=mix(vec3(.018,.065,.082),reflected,.48+fres*.40);
               color+=vec3(.14,.24,.28)*ring*.16;alpha=1.;
             }else{
               float field=noise(vWorld.xz*.7)*.72+noise(vWorld.xz*2.1)*.28;
-              alpha=(.03+smoothstep(.34,.68,field)*.18)*(.8+fres*.45);
+              alpha=(.03+smoothstep(.34,.68,field)*.18)*(.8+fres*.45)*wetness;
               color=reflected*vec3(.95,1.,1.03)+vec3(.15,.24,.28)*ring*.15;
             }
             gl_FragColor=vec4(color,alpha);
@@ -81,5 +81,12 @@ export class WetSurfaces {
     const width=quality==='high'?1280:quality==='low'?512:896;
     for(const mirror of [this.floor,this.water]){mirror.getRenderTarget().setSize(width,Math.round(width*.714));mirror.userData.invalidateReflection();}
   }
+  setWeather(wetness:number,rain:number){
+    this.floor.visible=wetness>.008;
+    for(const mirror of [this.floor,this.water]){
+      const u=(mirror.material as T.ShaderMaterial).uniforms;u.wetness!.value=wetness;u.rainAmount!.value=rain;
+    }
+  }
+  invalidate(){for(const mirror of [this.floor,this.water])mirror.userData.invalidateReflection();}
   dispose() { for(const mirror of [this.floor,this.water]){mirror.geometry.dispose();mirror.dispose();} }
 }

@@ -28,13 +28,17 @@ for(const [name,path]of [['Chrome','C:/Program Files/Google/Chrome/Application/c
     assert.equal(await page.locator('#place-name').innerText(),'青石雨巷');
     await page.keyboard.press('m');assert(await page.locator('#map-panel').isVisible());await page.keyboard.press('Escape');
     await page.keyboard.press('Escape');await page.selectOption('#quality','high');await page.selectOption('#quality','low');await page.selectOption('#quality','standard');await page.click('#resume');
+    await page.click('#environment-button');assert(await page.locator('#environment-panel').isVisible());
+    for(const time of ['dawn','day','sunset','night']){await page.selectOption('#time-of-day',time);await page.waitForTimeout(300);}
+    for(const weather of ['clear','cloudy','rain','drizzle']){await page.selectOption('#weather',weather);await page.waitForTimeout(300);}
+    await page.check('#time-cycle');await page.uncheck('#time-cycle');await page.click('#close-environment');
     await page.click('#audio');assert.equal(await page.locator('#audio').getAttribute('aria-pressed'),'true');await page.click('#audio');
     await page.keyboard.press('p');const downloadPromise=page.waitForEvent('download');await page.click('#save-photo');const download=await downloadPromise;await download.saveAs(fileURLToPath(new URL(`production-${name.toLowerCase()}-photo.png`,output)));assert(!(await download.failure()));
     const png=await readFile(fileURLToPath(new URL(`production-${name.toLowerCase()}-photo.png`,output)));assert(png.length>20000);assert.equal(png.toString('hex',0,8),'89504e470d0a1a0a');
     await page.keyboard.press('p');await page.keyboard.press('r');await page.waitForTimeout(500);assert.equal(await page.locator('#place-name').innerText(),'听雨小院');
     await page.setViewportSize({width:1100,height:720});await page.waitForTimeout(200);await page.screenshot({path:fileURLToPath(new URL(`production-${name.toLowerCase()}.png`,output))});
     assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(failed,[]);
-    results.push({name,version:await browser.version(),passed:true,errors,externalRequests:external,failedRequests:failed});console.log(`PASS ${name}: production movement, map, photo, audio, all quality settings, reset, resize, no external requests or debug interface`);
+    results.push({name,version:await browser.version(),passed:true,climateControls:true,errors,externalRequests:external,failedRequests:failed});console.log(`PASS ${name}: production movement, map, photo, audio, weather and time, all quality settings, reset, resize, no external requests or debug interface`);
   }finally{await browser.close();}
 }
 await writeFile(new URL('production.json',output),JSON.stringify({date:new Date().toISOString(),base,gzip:true,pathTraversalBlocked:true,directoryListingBlocked:true,head:true,browsers:results},null,2));

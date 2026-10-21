@@ -41,16 +41,6 @@ function garment(rings: Ring[], segments = 40, phase = 0) {
   geo.setAttribute('uv', new T.Float32BufferAttribute(uvs, 2)); geo.setIndex(indices); geo.computeVertexNormals();
   return geo;
 }
-function fabricTexture() {
-  const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
-  const c = canvas.getContext('2d')!; c.fillStyle = '#e7e6e1'; c.fillRect(0, 0, 128, 128);
-  for (let y = 0; y < 128; y += 2) for (let x = 0; x < 128; x += 2) {
-    c.fillStyle = (x + y) % 4 === 0 ? '#f4f3ed' : '#d2d2cc'; c.fillRect(x, y, 1, 2);
-  }
-  const tex = new T.CanvasTexture(canvas); tex.wrapS = tex.wrapT = T.RepeatWrapping; tex.repeat.set(2, 2); tex.anisotropy = 4;
-  return tex;
-}
-
 // The bag's shoulder strap is a flat textile ribbon, with separate sewn edges.
 function ribbon(parent: T.Object3D, mat: T.Material, points: number[][], width: number, depth = .004) {
   const path = new T.CatmullRomCurve3(points.map(p => new T.Vector3(...p as [number, number, number])));
@@ -135,8 +125,8 @@ export class Character {
   phase = 0; blend = 0;
 
   constructor() {
-    const weave = fabricTexture();
-    const cloth = (color: string) => { const m = material(color, .96); m.bumpMap = weave; m.bumpScale = .00075; return m; };
+    // Cloth folds carry the shading; pixel-scale bump noise breaks cel bands at sunset.
+    const cloth = (color: string) => material(color, .96);
     const coat = cloth('#477e79'), coatEdge = cloth('#548982'), seam = cloth('#345e5a');
     const cream = cloth('#e7dfcb'), creamEdge = cloth('#cfc8b7'), skin = material('#e8b797', .73), skinShade = material('#c68c72', .84);
     const hair = material('#292820', .71), hairLight = material('#35342b', .74), hairShine = material('#414034', .71);
@@ -253,6 +243,9 @@ export class Character {
       tube(this.body,stitch,border,.0011,4);
     }
     combineRigidParts(this.root);
+    // Thin overlapping cloth folds self-shadow poorly under a low sunset sun.
+    // Keep architectural shade on the traveler and use the soft contact patch below.
+    this.root.traverse(object=>{if(object instanceof T.Mesh)object.castShadow=false;});
     const canvas=document.createElement('canvas');canvas.width=canvas.height=64;const c=canvas.getContext('2d')!;
     const gradient=c.createRadialGradient(32,32,0,32,32,32);gradient.addColorStop(0,'rgba(31,40,30,.27)');gradient.addColorStop(.40,'rgba(31,40,30,.13)');gradient.addColorStop(1,'rgba(31,40,30,0)');c.fillStyle=gradient;c.fillRect(0,0,64,64);
     const contact=part(this.root,new T.PlaneGeometry(.70,.60),new T.MeshBasicMaterial({map:new T.CanvasTexture(canvas),transparent:true,depthWrite:false}),0,-.019,0);contact.rotation.x=-Math.PI/2;contact.castShadow=false;
